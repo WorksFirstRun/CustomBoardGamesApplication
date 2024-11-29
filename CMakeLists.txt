@@ -15,6 +15,7 @@ set(Source
 set(Headers
         AssignmentDemo_WithBouns/BoardGame_Classes.h
         BoardGame_2/Four_in_a_Row.h
+        BoardGame_2/MinMax_FourInRow.h
 
 )
 
