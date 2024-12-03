@@ -528,7 +528,7 @@ bool BoardGame2_Wrapper::isGameOver() {
 }
 
 void BoardGame2_Wrapper::ClearGameState() {
-    if (!isInitialized()){
+    if (isInitialized()){
         delete board;
         board = nullptr; // Now safe to check if the board is initialized
 
