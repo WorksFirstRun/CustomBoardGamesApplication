@@ -5,7 +5,6 @@
 #include <iostream>
 #include <iomanip>
 
-// Forward declarations
 template <typename T> class 5x5_Board;
 template <typename T> class 5x5_HumanPlayer;
 template <typename T> class 5x5_RandomPlayer;
@@ -19,7 +18,7 @@ private:
     bool isValidMove(int x, int y, T symbol);
 
 public:
-    // Constructor
+  
     5x5_Board() {
         this->rows = this->columns = 5;
         this->board = new T*[this->rows];
@@ -79,7 +78,7 @@ public:
     }
 
     bool game_is_over() override {
-        return this->n_moves == 24;  // Game ends when 24 moves are made
+        return this->n_moves == 24;  
     }
 
     
@@ -96,8 +95,8 @@ public:
 template <typename T>
 class 5x5_HumanPlayer : public Player<T> {
 private:
-    static int player_count;  // Keep track of which player is being created (1 or 2)
-    int player_number;        // Store whether this is player 1 or 2
+    static int player_count; 
+    int player_number;       
 
 public:
     5x5_HumanPlayer() : Player<T>("", ' ') {
@@ -121,10 +120,10 @@ public:
         do {
             cout << "Choose your symbol (X or O): ";
             cin >> symbol;
-            symbol = toupper(symbol);  // Convert to uppercase
+            symbol = toupper(symbol); 
         } while (symbol != 'X' && symbol != 'O');
 
-        // If player 2 chooses the same symbol as player 1, give them the other symbol
+       
         if (player_number == 2 && symbol == this->other_symbol) {
             cout << "Symbol already taken. You will be assigned: " 
                  << (symbol == 'X' ? 'O' : 'X') << endl;
@@ -185,39 +184,16 @@ public:
     void getmove(int& x, int& y) override {
         x = rand() % dimension;
         y = rand() % dimension;
-        // Keep generating random moves until a valid one is found
         while (!this->boardPtr->update_board(x, y, this->symbol)) {
             x = rand() % dimension;
             y = rand() % dimension;
         }
-        this->boardPtr->update_board(x, y, '.');  // Undo the move
+        this->boardPtr->update_board(x, y, '.'); 
     }
 };
 
 //================= MinMax Player Class =================
-template <typename T>
-class 5x5_MinMaxPlayer : public Player<T> {
-private:
-    int calculateMinMax(T symbol, bool isMaximizing) {
-        // TODO: Implement MinMax algorithm
-        // Consider three-in-a-row counts for evaluation
-    }
 
-    std::pair<int, int> getBestMove() {
-        // TODO: Implement best move selection
-        // Use calculateMinMax to evaluate positions
-    }
-
-public:
-    5x5_MinMaxPlayer(T symbol) : Player<T>("AI Player", symbol) {}
-
-    void getmove(int& x, int& y) override {
-        // TODO: Implement AI move selection
-        std::pair<int, int> move = getBestMove();
-        x = move.first;
-        y = move.second;
-    }
-};
 
 //================= Helper Function Implementations =================
 template <typename T>
@@ -226,43 +202,43 @@ int 5x5_Board<T>::countThreeInARow(T symbol) {
     
     // Check horizontal three-in-a-row
     for (int i = 0; i < this->rows; i++) {
-        for (int j = 0; j <= this->columns - 3; j++) {
+        for (int j = 1; j < this->columns - 1; j++) {
             if (this->board[i][j] == symbol && 
-                this->board[i][j+1] == symbol && 
-                this->board[i][j+2] == symbol) {
+                this->board[i][j-1] == symbol && 
+                this->board[i][j+1] == symbol) {
                 count++;
             }
         }
     }
     
     // Check vertical three-in-a-row
-    for (int i = 0; i <= this->rows - 3; i++) {
+    for (int i = 1; i < this->rows - 1; i++) {
         for (int j = 0; j < this->columns; j++) {
             if (this->board[i][j] == symbol && 
-                this->board[i+1][j] == symbol && 
-                this->board[i+2][j] == symbol) {
+                this->board[i-1][j] == symbol && 
+                this->board[i+1][j] == symbol) {
                 count++;
             }
         }
     }
     
     // Check diagonal (top-left to bottom-right)
-    for (int i = 0; i <= this->rows - 3; i++) {
-        for (int j = 0; j <= this->columns - 3; j++) {
+    for (int i = 1; i < this->rows - 1; i++) {
+        for (int j = 1; j < this->columns - 1; j++) {
             if (this->board[i][j] == symbol && 
-                this->board[i+1][j+1] == symbol && 
-                this->board[i+2][j+2] == symbol) {
+                this->board[i-1][j-1] == symbol && 
+                this->board[i+1][j+1] == symbol) {
                 count++;
             }
         }
     }
     
     // Check diagonal (top-right to bottom-left)
-    for (int i = 0; i <= this->rows - 3; i++) {
-        for (int j = this->columns - 1; j >= 2; j--) {
+    for (int i = 1; i < this->rows - 1; i++) {
+        for (int j = 1; j < this->columns - 1; j++) {
             if (this->board[i][j] == symbol && 
-                this->board[i+1][j-1] == symbol && 
-                this->board[i+2][j-2] == symbol) {
+                this->board[i-1][j+1] == symbol && 
+                this->board[i+1][j-1] == symbol) {
                 count++;
             }
         }
@@ -271,20 +247,18 @@ int 5x5_Board<T>::countThreeInARow(T symbol) {
     return count;
 }
 
+
 template <typename T>
 bool 5x5_Board<T>::isValidMove(int x, int y, T symbol) {
-    // Check if coordinates are within bounds
     if (x < 0 || x >= this->rows || y < 0 || y >= this->columns) {
         return false;
     }
     
-    // For new moves: cell must be empty
     if (symbol != '.') {
         return this->board[x][y] == '.';
     }
     
-    // For undo: cell must contain a symbol
     return this->board[x][y] != '.';
 }
 
-#endif //_5X5X_O_H
+#endif 
