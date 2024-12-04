@@ -5,21 +5,21 @@
 #include <iostream>
 #include <iomanip>
 
-template <typename T> class 5x5_Board;
-template <typename T> class 5x5_HumanPlayer;
-template <typename T> class 5x5_RandomPlayer;
+// Forward declarations
+template <typename T> class FiveByFive_Board;
+template <typename T> class FiveByFive_HumanPlayer;
+template <typename T> class FiveByFive_RandomPlayer;
 template <typename T> class 5x5_MinMaxPlayer;
 
 //================= Board Class =================
 template <typename T>
-class 5x5_Board : public Board<T> {
+class FiveByFive_Board : public Board<T> {
 private:
     int countThreeInARow(T symbol); 
     bool isValidMove(int x, int y, T symbol);
 
 public:
-  
-    5x5_Board() {
+    FiveByFive_Board() {
         this->rows = this->columns = 5;
         this->board = new T*[this->rows];
         for (int i = 0; i < this->rows; i++) {
@@ -93,13 +93,13 @@ public:
 
 //================= Human Player Class =================
 template <typename T>
-class 5x5_HumanPlayer : public Player<T> {
+class FiveByFive_HumanPlayer : public Player<T> {
 private:
-    static int player_count; 
-    int player_number;       
+    static int player_count;  
+    int player_number;        
 
 public:
-    5x5_HumanPlayer() : Player<T>("", ' ') {
+    FiveByFive_HumanPlayer() : Player<T>("", ' ') {
         player_count++;
         if (player_count > 2) {
             throw runtime_error("Cannot create more than 2 players");
@@ -120,12 +120,15 @@ public:
         do {
             cout << "Choose your symbol (X or O): ";
             cin >> symbol;
-            symbol = toupper(symbol); 
-        } while (symbol != 'X' && symbol != 'O');
+            symbol = toupper(symbol);  
+        } 
+        
+        while (symbol != 'X' && symbol != 'O');
 
-       
+        // If player 2 chooses the same symbol as player 1  give them the other symbol
         if (player_number == 2 && symbol == this->other_symbol) {
             cout << "Symbol already taken. You will be assigned: " 
+
                  << (symbol == 'X' ? 'O' : 'X') << endl;
             symbol = (symbol == 'X' ? 'O' : 'X');
         }
@@ -134,24 +137,16 @@ public:
         this->symbol = symbol;
         
         if (player_number == 1) {
-            this->other_symbol = symbol;  // Store first player's symbol
+            this->other_symbol = symbol;  
         }
     }
 
     void getmove(int& x, int& y) override {
         cout << "\nPlayer " << this->name << "'s turn (" << this->symbol << ")" << endl;
         cout << "Please enter your move x and y (0 to 4) separated by spaces: ";
-        
-        while (true) {
+                this->boardPtr->display_board();
             cin >> x >> y;
-            if (cin.fail() || x < 0 || x >= 5 || y < 0 || y >= 5) {
-                cin.clear();
-                cin.ignore(numeric_limits<streamsize>::max(), '\n');
-                cout << "Invalid input! Please enter numbers between 0 and 4: ";
-                continue;
-            }
-            break;
-        }
+            
     }
 
     static void resetPlayerCount() {
@@ -159,24 +154,23 @@ public:
     }
 
 private:
-    static T other_symbol;  // Store the first player's symbol to prevent duplicates
+    static T other_symbol; 
 };
 
-// Initialize static members
 template <typename T>
-int 5x5_HumanPlayer<T>::player_count = 0;
+int FiveByFive_HumanPlayer<T>::player_count = 0;
 
 template <typename T>
-T 5x5_HumanPlayer<T>::other_symbol = ' ';
+T FiveByFive_HumanPlayer<T>::other_symbol = ' ';
 
 //================= Random Player Class =================
 template <typename T>
-class 5x5_RandomPlayer : public Player<T> {
+class FiveByFive_RandomPlayer : public Player<T> {
 private:
     int dimension;
 
 public:
-    5x5_RandomPlayer(T symbol) : Player<T>("Random Computer Player", symbol) {
+    FiveByFive_RandomPlayer(T symbol) : Player<T>("Random Computer Player", symbol) {
         dimension = 5;
         srand(static_cast<unsigned int>(time(0)));
     }
@@ -188,16 +182,15 @@ public:
             x = rand() % dimension;
             y = rand() % dimension;
         }
-        this->boardPtr->update_board(x, y, '.'); 
+        this->boardPtr->update_board(x, y, '.');  
     }
 };
 
-//================= MinMax Player Class =================
 
 
 //================= Helper Function Implementations =================
 template <typename T>
-int 5x5_Board<T>::countThreeInARow(T symbol) {
+int FiveByFive_Board<T>::countThreeInARow(T symbol) {
     int count = 0;
     
     // Check horizontal three-in-a-row
@@ -247,9 +240,8 @@ int 5x5_Board<T>::countThreeInARow(T symbol) {
     return count;
 }
 
-
 template <typename T>
-bool 5x5_Board<T>::isValidMove(int x, int y, T symbol) {
+bool FiveByFive_Board<T>::isValidMove(int x, int y, T symbol) {
     if (x < 0 || x >= this->rows || y < 0 || y >= this->columns) {
         return false;
     }
