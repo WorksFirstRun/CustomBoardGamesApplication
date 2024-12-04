@@ -143,7 +143,7 @@ public:
     void getmove(int& x, int& y) override {
         cout << "\nPlayer " << this->name << "'s turn (" << this->symbol << ")" << endl;
         cout << "Please enter your move x and y (0 to 4) separated by spaces: ";
-                this->boardPtr->display_board();
+        
             cin >> x >> y;
             
     }
