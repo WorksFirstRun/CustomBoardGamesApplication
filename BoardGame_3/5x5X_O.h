@@ -5,7 +5,6 @@
 #include <iostream>
 #include <iomanip>
 
-// Forward declarations
 template <typename T> class FiveByFive_Board;
 template <typename T> class FiveByFive_HumanPlayer;
 template <typename T> class FiveByFive_RandomPlayer;
