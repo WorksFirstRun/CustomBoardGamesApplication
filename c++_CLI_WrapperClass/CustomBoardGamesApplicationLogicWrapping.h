@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "../CustomBoardGamesApplication/BoardGame_2/Four_in_a_Row.h"
 #include "../CustomBoardGamesApplication/BoardGame_5/Numerical_Tic_Tac_Toe.h"
+#include "../CustomBoardGamesApplication/BoardGame_7/FourByFourTicTacToe.h"
 #include <msclr/marshal_cppstd.h>
 using namespace System;
 using namespace System::Collections::Generic;
@@ -103,5 +104,53 @@ namespace CustomBoardGamesApplicationLogicWrapping {
 		bool isGameOver_MC();
 		void ClearGameState_MC();
 
+	};
+
+	public ref class BoardGame7
+	{
+	private:
+		BoardGame7_Wrapper* boardGame7Logic;
+	public:
+
+		enum class PlayerTypeBoardGame7
+		{
+			Human,
+			Random,
+		};
+
+		BoardGame7()
+		{
+			boardGame7Logic = new BoardGame7_Wrapper();
+		}
+
+		~BoardGame7()
+		{
+			this->!BoardGame7();
+		}
+
+
+		!BoardGame7()
+		{
+			delete boardGame7Logic;
+		}
+
+
+		BoardGame7_Wrapper::PlayerType ConvertToNativePlayerType(PlayerTypeBoardGame7 playerType);
+		void InitializeTheBoard_MC(String^ player1Name, String^ player2Name, PlayerTypeBoardGame7 player1Type, PlayerTypeBoardGame7 player2Type);
+		List<List<char>^ > ^ GetBoard_MC();
+		int GetNumberOfMovesPlayed_MC();
+		String^ GetPlayer1Name_MC();
+		String^ GetPlayer2Name_MC();
+		KeyValuePair<int,int>^ GetPlayer1Move_MC();
+		KeyValuePair<int,int>^ GetPlayer2Move_MC();
+		void SelectTokenForHumanPlayer_MC(int x, int y, int playerIndex);
+		KeyValuePair<int, int>^ GetCurrentSelectedTokenPlayer1_MC();
+		KeyValuePair<int, int>^ GetCurrentSelectedTokenPlayer2_MC();
+		void Player1PerformMove_MC(int x, int y);
+		void Player2PerformMove_MC(int x, int y);
+		bool isWin_MC();
+		bool isDraw_MC();
+		bool isGameOver_MC();
+		void ClearGameState_MC();
 	};
 }

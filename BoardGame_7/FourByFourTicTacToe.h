@@ -8,6 +8,7 @@
 #include <utility>
 
 
+
 template<typename T>
 class FourByFourTTT_Board : public Board<T>{
 private:
@@ -34,28 +35,6 @@ public:
     int GetNumberOfMoves();
 };
 
-template<typename T>
-class FourByFourTTT_Player : public Player<T>{
-public:
-    FourByFourTTT_Player(string n, T symbol);
-
-
-    void getmove(int &x, int &y) override;
-};
-
-template<typename T>
-class FourByFourTTT_RandomPlayer : public RandomPlayer<T>{
-private:
-    pair<int,int> lastPositionPlayed;
-    vector<T*> tokensReference;
-    vector<pair<int,int>> GetPossibleValidMoves(pair<int, int> currentPosition);
-    char playerSymbol;
-    void UpdateReferences();
-public:
-    FourByFourTTT_RandomPlayer(T token,Board<T> * boardForInitialization);
-
-    void getmove(int &x,int & y) override;
-};
 
 class Token{
 public:
@@ -139,10 +118,10 @@ public:
     }
 
     Token(const Token& other) {
-       this->currentPosition = other.currentPosition;
-       this->symbol = other.symbol;
-       this->previousMoves = other.previousMoves;
-       this->boardPtr = other.boardPtr;  // Copy the shared_ptr
+        this->currentPosition = other.currentPosition;
+        this->symbol = other.symbol;
+        this->previousMoves = other.previousMoves;
+        this->boardPtr = other.boardPtr;  // Copy the shared_ptr
     }
 
     Token& operator=(const Token& other) {
@@ -166,6 +145,72 @@ public:
 
 
 };
+
+template<typename T>
+class FourByFourTTT_Player : public Player<T>{
+public:
+    FourByFourTTT_Player(string n, T symbol);
+
+
+    void getmove(int &x, int &y) override;
+    void SetCurrentToken(Token & t);
+};
+
+template<typename T>
+class FourByFourTTT_RandomPlayer : public RandomPlayer<T>{
+private:
+    pair<int,int> lastPositionPlayed;
+    vector<T*> tokensReference;
+    vector<pair<int,int>> GetPossibleValidMoves(pair<int, int> currentPosition);
+    char playerSymbol;
+    void UpdateReferences();
+public:
+    FourByFourTTT_RandomPlayer(T token,Board<T> * boardForInitialization);
+
+    void getmove(int &x,int & y) override;
+};
+
+
+class BoardGame7_Wrapper{
+private:
+    FourByFourTTT_Board<Token> * board;
+    Player<Token> * players[2];
+    bool isInitialized();
+public:
+    enum PlayerType{
+        Human,
+        Randomizer,};
+
+    PlayerType playersType[2];
+
+    void InitializeGame(string player1,string player2,PlayerType player1Type,PlayerType player2Type);
+    vector<vector<char>> GetBoard();
+    int GetMovesPlayed();
+    string GetPlayer1Name();
+    string GetPlayer2Name();
+
+    void SelectTokenForHumanPlayer(int x,int y,int playerIndex);
+
+    pair<int,int> GetCurrentSelectedTokenPlayer1();
+    pair<int,int> GetCurrentSelectedTokenPlayer2();
+
+    void GetPlayer1Move(int &x, int &y);
+    void GetPlayer2Move(int &x, int &y);
+
+    void Player1PerformMove(int x,int y);
+    void Player2PerformMove(int x, int y);
+
+    bool isWin();
+    bool isDraw();
+    bool isGameOver();
+
+    void ClearGameState();
+
+    ~BoardGame7_Wrapper();
+
+
+};
+
 
 
 ///###############################################################
@@ -324,6 +369,12 @@ T *FourByFourTTT_Board<T>::GetTokenAtPosition(int x, int y) {
 ///################################################################
 
 template<typename T>
+void FourByFourTTT_Player<T>::SetCurrentToken(Token &t) {
+    this->symbol = t;
+    this->symbol.boardPtr = t.boardPtr;
+}
+
+template<typename T>
 FourByFourTTT_Player<T>::FourByFourTTT_Player(string n,T symbol) : Player<T>(n,symbol){}
 
 template<typename T>
@@ -448,6 +499,7 @@ void FourByFourTTT_RandomPlayer<T>::UpdateReferences() {
     }
 }
 
+/*
 
 void RunBoardGame(){
     int choice;
@@ -465,7 +517,7 @@ void RunBoardGame(){
     string player1,player2;
 
 
-    cout << "Five by Five XO GameBoard3 \n";
+    cout << "Four by Four XO GameBoard5 \n";
 
     // Set up player 1
     cout << "Enter Player 1 name (symbol is X): ";
@@ -522,7 +574,194 @@ void RunBoardGame(){
     for (auto & player : players){
         delete player;
     }
+}*/
+
+
+bool BoardGame7_Wrapper::isInitialized() {
+    return board != nullptr && players[0] != nullptr && players[1] != nullptr;
 }
 
+void
+BoardGame7_Wrapper::InitializeGame(std::string player1, std::string player2, BoardGame7_Wrapper::PlayerType player1Type,
+                                   BoardGame7_Wrapper::PlayerType player2Type) {
+    board = new FourByFourTTT_Board<Token>();
+    auto boardPtr = std::shared_ptr<FourByFourTTT_Board<Token>>(board);
+    playersType[0] = player1Type;
+    playersType[1] = player2Type;
+
+    auto emptyToken1 = std::make_shared<Token>();
+    emptyToken1->InitializeData({0, 0}, 'X', boardPtr);
+
+    auto emptyToken2 = std::make_shared<Token>();
+    emptyToken2->InitializeData({0, 0}, 'O', boardPtr);
+
+    switch(player1Type){
+        case Human:
+            players[0] = new FourByFourTTT_Player<Token>(player1,*emptyToken1);
+            players[0]->setBoard(boardPtr.get());
+            break;
+        case Randomizer:
+            players[0] = new FourByFourTTT_RandomPlayer<Token>(*emptyToken1,boardPtr.get());
+            players[0]->setBoard(boardPtr.get());
+            break;
+        default:
+            throw std::runtime_error("wrong playerType passed, consider looking at line 377 in function InitializeGame to debug if you want");
+    }
+
+    switch(player2Type){
+        case Human:
+            players[1] = new FourByFourTTT_Player<Token>(player2,*emptyToken2);
+            players[1]->setBoard(boardPtr.get());
+            break;
+        case Randomizer:
+            players[1] = new FourByFourTTT_RandomPlayer<Token>(*emptyToken2,boardPtr.get());
+            players[1]->setBoard(boardPtr.get());
+            break;
+        default:
+            throw std::runtime_error("wrong playerType passed, consider looking at line 393 in function InitializeGame to debug if you want");
+    }
+}
+
+vector<vector<char>> BoardGame7_Wrapper::GetBoard() {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    vector<vector<char>> result(4, vector<char>(4));
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            result[i][j] = board->GetTokenAtPosition(i, j)->symbol;
+        }
+    }
+    return result;
+}
+
+int BoardGame7_Wrapper::GetMovesPlayed() {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    return board->GetNumberOfMoves();
+}
+
+string BoardGame7_Wrapper::GetPlayer1Name() {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    return players[0]->getname();
+}
+
+string BoardGame7_Wrapper::GetPlayer2Name() {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    return players[1]->getname();
+}
+
+
+void BoardGame7_Wrapper::SelectTokenForHumanPlayer(int x, int y, int playerIndex) {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    auto tokenPtr = board->GetTokenAtPosition(x,y);
+
+    auto player = dynamic_cast<FourByFourTTT_Player<Token>*>(players[playerIndex]);
+    player->SetCurrentToken(*tokenPtr);
+}
+
+
+pair<int, int> BoardGame7_Wrapper::GetCurrentSelectedTokenPlayer1() {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    return players[0]->getsymbol().currentPosition;
+}
+
+
+pair<int, int> BoardGame7_Wrapper::GetCurrentSelectedTokenPlayer2() {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    return players[1]->getsymbol().currentPosition;
+}
+
+void BoardGame7_Wrapper::GetPlayer1Move(int &x, int &y) {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    if (playersType[0] == Human){
+        // Manage the move in ui if the player 1 is human
+        return;
+    }
+    players[0]->getmove(x,y);
+}
+
+
+void BoardGame7_Wrapper::GetPlayer2Move(int &x, int &y) {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    if (playersType[1] == Human){
+        // Manage the move in ui if the player 1 is human
+        return;
+    }
+    players[1]->getmove(x,y);
+}
+
+void BoardGame7_Wrapper::Player1PerformMove(int x, int y) {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    if (!board->update_board(x,y,players[0]->getsymbol())){
+        throw runtime_error("Move didn't performed since it's a bad move, line 685 in Player1PerformMove");
+    }
+}
+
+
+void BoardGame7_Wrapper::Player2PerformMove(int x, int y) {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    if (!board->update_board(x,y,players[1]->getsymbol())){
+        throw runtime_error("Move didn't performed since it's a bad move, line 692 in Player1PerformMove");
+    }
+}
+
+bool BoardGame7_Wrapper::isWin() {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    return board->is_win();
+}
+
+bool BoardGame7_Wrapper::isDraw() {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    return false;
+}
+
+bool BoardGame7_Wrapper::isGameOver() {
+    if (!isInitialized()){
+        throw std::runtime_error("Game is not Initialized, Initialize first");
+    }
+    return board->game_is_over();
+}
+
+void BoardGame7_Wrapper::ClearGameState() {
+    if (isInitialized()){
+        delete board;
+        board = nullptr; // Now safe to check if the board is initialized
+
+        delete players[0];
+        players[0] = nullptr;
+
+        delete players[1];
+        players[1] = nullptr;
+    }
+}
+
+BoardGame7_Wrapper::~BoardGame7_Wrapper(){
+    ClearGameState();
+}
 
 #endif //CUSTOMBOARDGAMESAPPLICATION_FOURBYFOURTICTACTOE_H
