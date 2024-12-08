@@ -26,7 +26,7 @@ void CustomBoardGamesApplicationLogicWrapping::BoardGame2::InitializeTheBoard_MC
 	    string nativeString_Player1Name = msclr::interop::marshal_as<string>(player1Name);
 	    string nativeString_Player2Name = msclr::interop::marshal_as<string>(player2Name);
 
-	    boardGame2Logic->InitializeGame(nativeString_Player1Name, nativeString_Player1Name,
+	    boardGame2Logic->InitializeGame(nativeString_Player1Name, nativeString_Player2Name,
 	        ConvertToNativePlayerType(player1Type), ConvertToNativePlayerType(player2Type));
 	}
     catch (Exception^ ex)
@@ -274,7 +274,7 @@ void CustomBoardGamesApplicationLogicWrapping::BoardGame5::InitializeTheBoard_MC
 		string nativeString_Player1Name = msclr::interop::marshal_as<string>(player1Name);
 		string nativeString_Player2Name = msclr::interop::marshal_as<string>(player2Name);
 
-		boardGame5Logic->InitializeGame(nativeString_Player1Name, nativeString_Player1Name,
+		boardGame5Logic->InitializeGame(nativeString_Player1Name, nativeString_Player2Name,
 			ConvertToNativePlayerType(player1Type), ConvertToNativePlayerType(player2Type));
 	}
 	catch (Exception^ ex)
@@ -455,7 +455,7 @@ void CustomBoardGamesApplicationLogicWrapping::BoardGame5::Player2PerformMove_MC
 {
 	try
 	{
-		boardGame5Logic->Player1PerformMove(x, y);
+		boardGame5Logic->Player2PerformMove(x, y);
 	}
 	catch (Exception^ ex)
 	{
@@ -484,11 +484,11 @@ bool CustomBoardGamesApplicationLogicWrapping::BoardGame5::isDraw_MC()
 	bool result = false;
 	try
 	{
-		result = boardGame5Logic->isWin();
+		result = boardGame5Logic->isDraw();
 	}
 	catch (Exception^ ex)
 	{
-		Console::WriteLine("Error occurred in isWin_MC: " + ex->Message);
+		Console::WriteLine("Error occurred in isDraw_MC: " + ex->Message);
 		throw;
 	}
 	return result;
@@ -522,15 +522,282 @@ void CustomBoardGamesApplicationLogicWrapping::BoardGame5::ClearGameState_MC()
 	}
 }
 
+BoardGame7_Wrapper::PlayerType CustomBoardGamesApplicationLogicWrapping::BoardGame7::ConvertToNativePlayerType(
+	PlayerTypeBoardGame7 playerType)
+{
+	switch (playerType)
+	{
+	case PlayerTypeBoardGame7::Human:
+		return BoardGame7_Wrapper::PlayerType::Human;
+	case PlayerTypeBoardGame7::Random:
+		return BoardGame7_Wrapper::PlayerType::Randomizer;
+	default:
+		throw gcnew ArgumentException("Invalid PlayerType");
+	}
+}
+
+void CustomBoardGamesApplicationLogicWrapping::BoardGame7::InitializeTheBoard_MC(String^ player1Name,
+	String^ player2Name, PlayerTypeBoardGame7 player1Type, PlayerTypeBoardGame7 player2Type)
+{
+	try
+	{
+		string nativeString_Player1Name = msclr::interop::marshal_as<string>(player1Name);
+		string nativeString_Player2Name = msclr::interop::marshal_as<string>(player2Name);
+
+		boardGame7Logic->InitializeGame(nativeString_Player1Name, nativeString_Player2Name,
+			ConvertToNativePlayerType(player1Type), ConvertToNativePlayerType(player2Type));
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error occurred in Initialization: " + ex->Message);
+		throw;
+	}
+}
+
+List<List<char> ^>^ CustomBoardGamesApplicationLogicWrapping::BoardGame7::GetBoard_MC()
+{
+	List<List<char> ^>^ boardList = gcnew List<List<char> ^>();
+
+	try
+	{
+		vector<vector<char>> boardArray = boardGame7Logic->GetBoard();
+
+		for (int i = 0; i < boardArray.size(); i++)
+		{
+			List<char>^ innerList = gcnew List<char>();
+			for (auto V : boardArray[i])
+			{
+				innerList->Add(V);
+			}
+			boardList->Add(innerList); 
+		}
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error occurred in GetBoard_MC: " + ex->Message);
+		throw;
+	}
+
+	return boardList;
+}
+
+int CustomBoardGamesApplicationLogicWrapping::BoardGame7::GetNumberOfMovesPlayed_MC()
+{
+	int n_moves = -1;
+	try
+	{
+		n_moves = boardGame7Logic->GetMovesPlayed();
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error occurred in GetNumberOfMovesPlayed_MC: " + ex->Message);
+		throw;
+	}
+	return n_moves;
+}
+
+String^ CustomBoardGamesApplicationLogicWrapping::BoardGame7::GetPlayer1Name_MC()
+{
+	String^ playerName = gcnew String("");
+	try
+	{
+		playerName = msclr::interop::marshal_as<String^>(boardGame7Logic->GetPlayer1Name());
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error occurred in GetPlayer1Name_MC: " + ex->Message);
+		throw;
+	}
+
+	return playerName;
+}
+
+String^ CustomBoardGamesApplicationLogicWrapping::BoardGame7::GetPlayer2Name_MC()
+{
+	String^ playerName = gcnew String("");
+	try
+	{
+		playerName = msclr::interop::marshal_as<String^>(boardGame7Logic->GetPlayer2Name());
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error occurred in GetPlayer2Name_MC: " + ex->Message);
+		throw;
+	}
+
+	return playerName;
+}
+
+KeyValuePair<int, int>^ CustomBoardGamesApplicationLogicWrapping::BoardGame7::GetPlayer1Move_MC()
+{
+	try
+	{
+		int x, y;
+		boardGame7Logic->GetPlayer1Move(x, y);
+
+		return gcnew KeyValuePair<int, int>(x, y);
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error occurred in GetPlayer1Move_MC: " + ex->Message);
+		throw;
+	}
+}
+
+KeyValuePair<int, int>^ CustomBoardGamesApplicationLogicWrapping::BoardGame7::GetPlayer2Move_MC()
+{
+	try
+	{
+		int x, y;
+		boardGame7Logic->GetPlayer2Move(x, y);
+
+		return gcnew KeyValuePair<int, int>(x, y);
+
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error occurred in GetPlayer2Move_MC: " + ex->Message);
+		throw;
+	}
+}
+
+void CustomBoardGamesApplicationLogicWrapping::BoardGame7::SelectTokenForHumanPlayer_MC(int x, int y, int playerIndex)
+{
+	try
+	{
+		boardGame7Logic->SelectTokenForHumanPlayer(x, y, playerIndex);
+	}
+	catch(Exception ^ ex)
+	{
+		Console::WriteLine("Error occurred in SelectTokenForHumanPlayer_MC: " + ex->Message);
+		throw;
+	}
+}
+
+KeyValuePair<int, int>^ CustomBoardGamesApplicationLogicWrapping::BoardGame7::GetCurrentSelectedTokenPlayer1_MC()
+{
+	try
+	{
+		int x, y;
+		pair<int, int> currentToken = boardGame7Logic->GetCurrentSelectedTokenPlayer1();
+
+		x = currentToken.first;
+		y = currentToken.second;
+
+		return gcnew KeyValuePair<int, int>(x, y);
+
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error occurred in GetCurrentSelectedTokenPlayer1_MC: " + ex->Message);
+		throw;
+	}
+}
+
+KeyValuePair<int, int>^ CustomBoardGamesApplicationLogicWrapping::BoardGame7::GetCurrentSelectedTokenPlayer2_MC()
+{
+	try
+	{
+		int x, y;
+		pair<int, int> currentToken = boardGame7Logic->GetCurrentSelectedTokenPlayer2();
+
+		x = currentToken.first;
+		y = currentToken.second;
+
+		return gcnew KeyValuePair<int, int>(x, y);
+
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error occurred in GetCurrentSelectedTokenPlayer2_MC: " + ex->Message);
+		throw;
+	}
+}
+
+void CustomBoardGamesApplicationLogicWrapping::BoardGame7::Player1PerformMove_MC(int x, int y)
+{
+	try
+	{
+		boardGame7Logic->Player1PerformMove(x, y);
+	}
+	catch(Exception ^ ex)
+	{
+		Console::WriteLine("Error occurred in Player1PerformMove_MC: " + ex->Message);
+		throw;
+	}
+}
 
 
+void CustomBoardGamesApplicationLogicWrapping::BoardGame7::Player2PerformMove_MC(int x, int y)
+{
+	try
+	{
+		boardGame7Logic->Player2PerformMove(x, y);
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error occurred in Player2PerformMove_MC: " + ex->Message);
+		throw;
+	}
+}
 
+bool CustomBoardGamesApplicationLogicWrapping::BoardGame7::isWin_MC()
+{
+	bool result = false;
+	try
+	{
+		result = boardGame7Logic->isWin();
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error occurred in isWin_MC: " + ex->Message);
+		throw;
+	}
+	return result;
+}
 
+bool CustomBoardGamesApplicationLogicWrapping::BoardGame7::isDraw_MC()
+{
+	bool result = false;
+	try
+	{
+		result = boardGame7Logic->isDraw();
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error occurred in isDraw_MC: " + ex->Message);
+		throw;
+	}
+	return result;
+}
 
+bool CustomBoardGamesApplicationLogicWrapping::BoardGame7::isGameOver_MC()
+{
+	bool result = false;
+	try
+	{
+		result = boardGame7Logic->isGameOver();
+	}
+	catch (Exception^ ex)
+	{
+		Console::WriteLine("Error occurred in isGameOver_MC: " + ex->Message);
+		throw;
+	}
+	return result;
+}
 
-
-
-
+void CustomBoardGamesApplicationLogicWrapping::BoardGame7::ClearGameState_MC()
+{
+	try
+	{
+		boardGame7Logic->ClearGameState();
+	}
+	catch(Exception ^ ex)
+	{
+		Console::WriteLine("Error occurred in ClearGameState_MC: " + ex->Message);
+		throw;
+	}
+}
 
 
 

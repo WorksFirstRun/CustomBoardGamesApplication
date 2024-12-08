@@ -432,7 +432,7 @@ void RunBoardGame(){ // if you want to play the game in terminal
 /// Implementation of the Wrapper class
 
 bool BoardGame5_Wrapper::isInitialized() {
-    return board != nullptr || players[0] != nullptr || players[1] != nullptr;
+    return board != nullptr && players[0] != nullptr && players[1] != nullptr;
 }
 
 void

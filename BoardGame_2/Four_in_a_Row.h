@@ -541,7 +541,7 @@ void BoardGame2_Wrapper::ClearGameState() {
 }
 
 bool BoardGame2_Wrapper::isInitialized() {
-    return board != nullptr || players[0] != nullptr || players[1] != nullptr;
+    return board != nullptr && players[0] != nullptr && players[1] != nullptr;
 }
 
 BoardGame2_Wrapper::~BoardGame2_Wrapper(){
