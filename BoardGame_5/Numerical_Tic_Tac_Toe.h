@@ -314,7 +314,7 @@ void NumericalTTT_RandomPlayer<T>::getmove(int &x, int &y) {
 
 
 /// end of RandomPlayer Implementation -----------------------------------|
-
+/*
 
 void RunBoardGame(){ // if you want to play the game in terminal
     int choice;
@@ -426,7 +426,7 @@ void RunBoardGame(){ // if you want to play the game in terminal
     for (auto & player : players){
         delete player;
     }
-}
+}*/
 
 
 /// Implementation of the Wrapper class

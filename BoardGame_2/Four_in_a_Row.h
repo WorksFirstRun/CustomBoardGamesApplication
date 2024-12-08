@@ -315,7 +315,7 @@ void Four_in_a_Row_RandomPlayer<T>::getmove(int &x, int &y) {
 /// --------------------------------------|
 
 
-
+/*
 void RunBoardGame(){ // if you want to play the game in terminal
     int choice;
 
@@ -383,7 +383,7 @@ void RunBoardGame(){ // if you want to play the game in terminal
     for (auto & player : players){
         delete player;
     }
-}
+}*/
 
 /// Wrapper class to use in GUI
 /// Implementation of it below
