@@ -52,6 +52,8 @@ public:
 
     void getmove(int &x,int &y) override;
 
+    void SetSymbol(int symbol);
+
 };
 
 
@@ -273,6 +275,11 @@ void NumericalTTT_Player<T>::getmove(int &x, int &y) {
         cin >> this->symbol;
     }
     this->RemoveUsedNumber(this->symbol);
+}
+
+template<typename T>
+void NumericalTTT_Player<T>::SetSymbol(int symbol) {
+    this->symbol = symbol;
 }
 
 /// end of NumericalTTT_Player ----------------------------------------------------|
@@ -619,8 +626,8 @@ void BoardGame5_Wrapper::GetPlayer1Move(int &x, int &y,int &symbol) {
         throw runtime_error("Game is Not initialized ");
     }
 
-    if (playersType[0]){
-        // pass since we will control the flow of this inside the UI
+    if (playersType[0] == Human){
+        dynamic_cast<NumericalTTT_Player<int>*>(players[0])->SetSymbol(symbol);
         return;
     }
 
@@ -635,8 +642,8 @@ void BoardGame5_Wrapper::GetPlayer2Move(int &x, int &y,int &symbol) {
         throw runtime_error("Game is Not initialized ");
     }
 
-    if (playersType[1]){
-        // pass since we will control the flow of this inside the UI
+    if (playersType[1] == Human){
+        dynamic_cast<NumericalTTT_Player<int>*>(players[1])->SetSymbol(symbol);
         return;
     }
 
