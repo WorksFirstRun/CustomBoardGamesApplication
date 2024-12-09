@@ -306,14 +306,32 @@ Four_in_a_Row_RandomPlayer<T>::Four_in_a_Row_RandomPlayer(T symbol) : RandomPlay
 
 template<typename T>
 void Four_in_a_Row_RandomPlayer<T>::getmove(int &x, int &y) {
-    y = rand() % this->dimension;
+    auto board = dynamic_cast<Four_in_a_Row_Board<char>*>(this->boardPtr);
+    vector<int> availableColumns;
+    auto Rows = board->GetCurrentRowOfEachColumn();
+    int col;
+    for (col = 0 ; col < 7 ; col++) {
+        if(Rows[col] >= 0) {
+            availableColumns.push_back(col);
+        }
+    }
+
+    if(availableColumns.empty()) {
+        x = -1;
+        y = -1;
+        return;
+    }
+
+    int randomIndex = rand() % availableColumns.size();
+    y = availableColumns[randomIndex];
+
+    x = Rows[col];
 }
 
 
 /// --------------------------------------|
 /// --> End of RandomPlayer Implementation|
 /// --------------------------------------|
-
 
 /*
 void RunBoardGame(){ // if you want to play the game in terminal
@@ -342,6 +360,7 @@ void RunBoardGame(){ // if you want to play the game in terminal
             break;
         case 2:
             players[0] = new Four_in_a_Row_RandomPlayer<char>('X');
+            players[0]->setBoard(board);
             break;
         case 3:
             players[0] = new FourInRowMinMax<char>('X','O');
@@ -365,6 +384,7 @@ void RunBoardGame(){ // if you want to play the game in terminal
             break;
         case 2:
             players[1] = new Four_in_a_Row_RandomPlayer<char>('O');
+            players[1]->setBoard(board);
             break;
         case 3:
             players[1] = new FourInRowMinMax<char>('O','X');
@@ -402,6 +422,7 @@ void BoardGame2_Wrapper::InitializeGame(std::string player1, std::string player2
             break;
         case Randomizer:
             players[0] = new Four_in_a_Row_RandomPlayer<char>('X');
+            players[0]->setBoard(board);
             break;
         case AI:
             players[0] = new FourInRowMinMax<char>('X','O');
@@ -417,6 +438,7 @@ void BoardGame2_Wrapper::InitializeGame(std::string player1, std::string player2
             break;
         case Randomizer:
             players[1] = new Four_in_a_Row_RandomPlayer<char>('O');
+            players[1]->setBoard(board);
             break;
         case AI:
             players[1] = new FourInRowMinMax<char>('O','X');
