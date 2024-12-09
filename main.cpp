@@ -1,79 +1,53 @@
 #include <iostream>
-#include "AssignmentDemo_WithBouns/BoardGame_Classes.h"
-#include "AssignmentDemo_WithBouns/3x3X_O.h"
-#include "AssignmentDemo_WithBouns/MinMaxPlayer.h"
 
+#include "AssignmentDemo_WithBouns/Ultimate_Tic-Tac-Toe.h"
 using namespace std;
 
 int main() {
-    int choice;
     Player<char>* players[2];
-    Board<char>* B = new X_O_Board<char>();
-    string playerXName, player2Name;
+    Ultimate_grid<char> Grid;
 
-    cout << "Welcome to FCAI X-O Game. :)\n";
-
-    // Set up player 1
+    string playerXName, playerOName;
     cout << "Enter Player X name: ";
     cin >> playerXName;
-    cout << "Choose Player X type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
+    players[0] = new Ultimate_Player<char>(playerXName, 'X');
 
-    switch(choice) {
-        case 1:
-            players[0] = new X_O_Player<char>(playerXName, 'X');
-            break;
-        case 2:
-            players[0] = new X_O_Random_Player<char>('X');
-            break;
-        case 3:
-            players[0] = new X_O_MinMax_Player<char>('X');
-            players[0]->setBoard(B);
-            break;
-        default:
-            cout << "Invalid choice for Player 1. Exiting the game.\n";
-            return 1;
+    cout << "Enter Player O name: ";
+    cin >> playerOName;
+    players[1] = new Ultimate_Player<char>(playerOName, 'O');
+
+    Grid.display_board();
+    int counter=0;
+    int x, y;
+    while (!Grid.game_is_over()) {
+        for (int i : {0, 1}) {
+            players[i]->getmove(x, y);
+            counter++;
+            while (!Grid.update_board(x, y, players[i]->getsymbol())) {
+                cout << "Invalid move. Try again.\n";
+                players[i]->getmove(x, y);
+            }
+                Grid.display_board();
+
+
+            if (Grid.is_win()) {
+                cout << players[i]->getname() << " wins!\n";
+                delete players[0];
+                delete players[1];
+                return 0;
+            }
+
+            if (Grid.is_draw()) {
+                cout << "It's a draw!\n";
+                delete players[0];
+                delete players[1];
+                return 0;
+            }
+        }
     }
 
-    // Set up player 2
-    cout << "Enter Player 2 name: ";
-    cin >> player2Name;
-    cout << "Choose Player 2 type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice) {
-        case 1:
-            players[1] = new X_O_Player<char>(player2Name, 'O');
-            break;
-        case 2:
-            players[1] = new X_O_Random_Player<char>('O');
-            break;
-        case 3:
-            players[1] = new X_O_MinMax_Player<char>('O');
-            players[1]->setBoard(B);
-            break;
-        default:
-            cout << "Invalid choice for Player 2. Exiting the game.\n";
-            return 1;
-    }
-
-    // Create the game manager and run the game
-    GameManager<char> x_o_game(B, players);
-    x_o_game.run();
-
-    // Clean up
-    delete B;
-    for (int i = 0; i < 2; ++i) {
-        delete players[i];
-    }
-
+    delete players[0];
+    delete players[1];
     return 0;
 }
-
 
