@@ -1,7 +1,7 @@
 
 #ifndef CUSTOMBOARDGAMESAPPLICATION_ULTIMATE_TIC_TAC_TOE_H
 #define CUSTOMBOARDGAMESAPPLICATION_ULTIMATE_TIC_TAC_TOE_H
-#include "Edited_3x3_XO.h"
+#include "Edited_3x3_XO.h."
 #include <map>
 
 template <typename T>
@@ -19,7 +19,7 @@ public:
 };
 
 template <typename T>
-class Ultimate_grid{
+class Ultimate_grid:public Board<T>{
 private:
     int n_moves=0;
 public:
@@ -37,7 +37,6 @@ public:
     ~Ultimate_grid() ;
 
 };
-
 template <typename T>
 void Ultimate_grid<T>::Set_win(int position,T symbol) {
     Win[position]=symbol;
@@ -56,7 +55,7 @@ template <typename T>
 
 bool Ultimate_grid<T>::Is_valid(int &x, int &y, T symbol) {
     int subGrid = (x / 3) * 3 + (y / 3);
-    return (x>=0 && x<9 && y>=0 && y<9&& (symbol=='X'||symbol=='O') &&Win[subGrid]!=' ');
+    return (x>=0 && x<9 && y>=0 && y<9&& (symbol=='X'||symbol=='O') &&Win[subGrid]==' ');
 }
 
 template <typename T>
@@ -83,13 +82,7 @@ bool Ultimate_grid<T>::update_board(int x, int y, T symbol) {
 
 template <typename T>
 void Ultimate_grid<T>::display_board() {
-    for(int i=0;i<3;i++){
-        Big_board[i]->display_board();
-    }
-    for(int i=3;i<6;i++){
-        Big_board[i]->display_board();
-    }
-    for(int i=6;i<9;i++){
+    for(int i=0;i<9;i++){
         Big_board[i]->display_board();
     }
     cout.flush();
@@ -113,7 +106,7 @@ bool Ultimate_grid<T>::is_win() {
 template <typename T>
 bool Ultimate_grid<T>::is_draw() {
 
-    return (this->n_moves == 27 && !is_win());
+    return (this->n_moves == 81 && !is_win());
 }
 
 template <typename T>
@@ -146,51 +139,6 @@ template <typename T>
 void Ultimate_Random_Player<T>::getmove(int& x, int& y) {
     x = rand() % 10;
     y = rand() % 10;
-}
-
-
-
-void RunBoardGame(){ // if you want to play the game in terminal
-    Player<char>* players[2];
-    Ultimate_grid<char> Grid;
-
-    string playerXName, playerOName;
-    cout << "Enter Player X name: ";
-    cin >> playerXName;
-    players[0] = new Ultimate_Player<char>(playerXName, 'X');
-
-    cout << "Enter Player O name: ";
-    cin >> playerOName;
-    players[1] = new Ultimate_Player<char>(playerOName, 'O');
-
-    Grid.display_board();
-    int counter=0;
-    int x, y;
-    while (!Grid.game_is_over()) {
-        for (int i : {0, 1}) {
-            players[i]->getmove(x, y);
-            counter++;
-            while (!Grid.update_board(x, y, players[i]->getsymbol())) {
-                cout << "Invalid move. Try again.\n";
-                players[i]->getmove(x, y);
-            }
-            Grid.display_board();
-
-
-            if (Grid.is_win()) {
-                cout << players[i]->getname() << " wins!\n";
-                 break;
-            }
-
-            if (Grid.is_draw()) {
-                cout << "It's a draw!\n";
-                break;
-            }
-        }
-    }
-
-    delete players[0];
-    delete players[1];
 }
 
 #endif

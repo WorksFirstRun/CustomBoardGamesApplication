@@ -1,7 +1,6 @@
-#ifndef _5X5X_O_H
-#define _5X5X_O_H
+#pragma once
 
-#include "BoardGame_Classes.h"
+#include "../AssignmentDemo_WithBouns/BoardGame_Classes.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -205,73 +204,72 @@ bool ThreeByThree_Board<T>::isValidMove(int x, int y, T symbol) {
 
 
 
-void RunBoardGame(){
-    int choice;
+//void RunBoardGame(){
+//    int choice;
+//
+//    Board<char> * board = new ThreeByThree_Board<char>();
+//    Player<char> * players[2];
+//
+//    string player1,player2;
+//
+//
+//    cout << "Five by Five XO GameBoard3 \n";
+//
+//    // Set up player 1
+//    cout << "Enter Player 1 name (symbol is X): ";
+//    cin >> player1;
+//    cout << "Choose Player X type:\n";
+//    cout << "1. Human\n";
+//    cout << "2. Random Computer\n";
+//    cout << "3. Smart Computer (AI)\n";
+//    cin >> choice;
+//
+//    switch(choice){
+//        case 1:
+//            players[0] = new ThreeByThree_HumanPlayer<char>(player1,'X');
+//            break;
+//        case 2:
+//            players[0] = new ThreeByThree_RandomPlayer<char>('X');
+//            players[0]->setBoard(board);
+//            break;
+//        case 3:
+//
+//        default:
+//            break;
+//    }
+//
+//
+//    cout << "Enter Player 2 name (symbol is O): ";
+//    cin >> player2;
+//    cout << "Choose Player O type:\n";
+//    cout << "1. Human\n";
+//    cout << "2. Random Computer\n";
+//    cout << "3. Smart Computer (AI)\n";
+//    cin >> choice;
+//
+//    switch(choice){
+//        case 1:
+//            players[1] = new ThreeByThree_HumanPlayer<char>(player2,'O');
+//            break;
+//        case 2:
+//            players[1] = new ThreeByThree_RandomPlayer<char>('O');
+//            players[1]->setBoard(board);
+//            break;
+//        case 3:
+//
+//            break;
+//        default:
+//            break;
+//    }
+//
+//    GameManager<char> fourInRowGameManager(board,players);
+//
+//    fourInRowGameManager.run();
+//
+//    delete board;
+//
+//    for (auto & player : players){
+//        delete player;
+//    }
 
-    Board<char> * board = new ThreeByThree_Board<char>();
-    Player<char> * players[2];
 
-    string player1,player2;
-
-
-    cout << "Five by Five XO GameBoard3 \n";
-
-    // Set up player 1
-    cout << "Enter Player 1 name (symbol is X): ";
-    cin >> player1;
-    cout << "Choose Player X type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice){
-        case 1:
-            players[0] = new ThreeByThree_HumanPlayer<char>(player1,'X');
-            break;
-        case 2:
-            players[0] = new ThreeByThree_RandomPlayer<char>('X');
-            players[0]->setBoard(board);
-            break;
-        case 3:
-
-        default:
-            break;
-    }
-
-
-    cout << "Enter Player 2 name (symbol is O): ";
-    cin >> player2;
-    cout << "Choose Player O type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice){
-        case 1:
-            players[1] = new ThreeByThree_HumanPlayer<char>(player2,'O');
-            break;
-        case 2:
-            players[1] = new ThreeByThree_RandomPlayer<char>('O');
-            players[1]->setBoard(board);
-            break;
-        case 3:
-
-            break;
-        default:
-            break;
-    }
-
-    GameManager<char> fourInRowGameManager(board,players);
-
-    fourInRowGameManager.run();
-
-    delete board;
-
-    for (auto & player : players){
-        delete player;
-    }
-}
-
-#endif
