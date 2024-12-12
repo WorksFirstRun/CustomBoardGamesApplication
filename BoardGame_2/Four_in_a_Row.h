@@ -333,6 +333,7 @@ void Four_in_a_Row_RandomPlayer<T>::getmove(int &x, int &y) {
 /// --> End of RandomPlayer Implementation|
 /// --------------------------------------|
 
+
 /*
 void RunBoardGame(){ // if you want to play the game in terminal
     int choice;

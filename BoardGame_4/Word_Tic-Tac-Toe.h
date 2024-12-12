@@ -187,7 +187,6 @@ void RunBoardGame(){ // if you want to play the game in terminal
     cout << "Choose Player X type:\n";
     cout << "1. Human\n";
     cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
     cin >> choice;
 
     switch(choice){
@@ -198,7 +197,6 @@ void RunBoardGame(){ // if you want to play the game in terminal
             players[0] = new Word_Random_Player<char>('X');
             players[0]->setBoard(board);
             break;
-        case 3:
         default:
             break;
     }
@@ -209,7 +207,6 @@ void RunBoardGame(){ // if you want to play the game in terminal
     cout << "Choose Player O type:\n";
     cout << "1. Human\n";
     cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
     cin >> choice;
 
     switch(choice){
@@ -220,8 +217,7 @@ void RunBoardGame(){ // if you want to play the game in terminal
             players[1] = new Word_Random_Player<char>('O');
             players[1]->setBoard(board);
             break;
-        case 3:
-            break;
+
         default:
             break;
     }
