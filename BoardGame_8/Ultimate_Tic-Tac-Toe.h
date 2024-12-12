@@ -1,7 +1,7 @@
 
 #ifndef CUSTOMBOARDGAMESAPPLICATION_ULTIMATE_TIC_TAC_TOE_H
 #define CUSTOMBOARDGAMESAPPLICATION_ULTIMATE_TIC_TAC_TOE_H
-#include "Edited_3x3_XO.h"
+#include "Edited_3x3_XO.h."
 #include <map>
 
 template <typename T>
@@ -19,7 +19,7 @@ public:
 };
 
 template <typename T>
-class Ultimate_grid : public Board<T>{
+class Ultimate_grid:public Board<T>{
 private:
     int n_moves=0;
 public:
@@ -37,7 +37,6 @@ public:
     ~Ultimate_grid() ;
 
 };
-
 template <typename T>
 void Ultimate_grid<T>::Set_win(int position,T symbol) {
     Win[position]=symbol;
@@ -56,7 +55,7 @@ template <typename T>
 
 bool Ultimate_grid<T>::Is_valid(int &x, int &y, T symbol) {
     int subGrid = (x / 3) * 3 + (y / 3);
-    return (x>=0 && x<9 && y>=0 && y<9&& (symbol=='X'||symbol=='O') &&Win[subGrid]!=' ');
+    return (x>=0 && x<9 && y>=0 && y<9&& (symbol=='X'||symbol=='O') &&Win[subGrid]==' ');
 }
 
 template <typename T>
@@ -83,13 +82,7 @@ bool Ultimate_grid<T>::update_board(int x, int y, T symbol) {
 
 template <typename T>
 void Ultimate_grid<T>::display_board() {
-    for(int i=0;i<3;i++){
-        Big_board[i]->display_board();
-    }
-    for(int i=3;i<6;i++){
-        Big_board[i]->display_board();
-    }
-    for(int i=6;i<9;i++){
+    for(int i=0;i<9;i++){
         Big_board[i]->display_board();
     }
     cout.flush();
@@ -113,7 +106,7 @@ bool Ultimate_grid<T>::is_win() {
 template <typename T>
 bool Ultimate_grid<T>::is_draw() {
 
-    return (this->n_moves == 27 && !is_win());
+    return (this->n_moves == 81 && !is_win());
 }
 
 template <typename T>
@@ -146,75 +139,6 @@ template <typename T>
 void Ultimate_Random_Player<T>::getmove(int& x, int& y) {
     x = rand() % 10;
     y = rand() % 10;
-}
-
-
-
-void RunBoardGame(){ // if you want to play the game in terminal
-    int choice;
-
-    Board<char> * board = new Ultimate_grid<char>();
-    Player<char> * players[2];
-
-    string player1,player2;
-
-
-    cout << "Four in Row GameBoard2 \n";
-
-    // Set up player 1
-    cout << "Enter Player 1 name (symbol is X): ";
-    cin >> player1;
-    cout << "Choose Player X type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice){
-        case 1:
-            players[0] = new Ultimate_Player<char>(player1,'X');
-            break;
-        case 2:
-            players[0] = new Ultimate_Random_Player<char>('X');
-            players[0]->setBoard(board);
-            break;
-        case 3:
-        default:
-            break;
-    }
-
-
-    cout << "Enter Player 2 name (symbol is O): ";
-    cin >> player2;
-    cout << "Choose Player O type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice){
-        case 1:
-            players[1] = new Ultimate_Player<char>(player2,'O');
-            break;
-        case 2:
-            players[1] = new Ultimate_Random_Player<char>('O');
-            players[1]->setBoard(board);
-            break;
-        case 3:
-            break;
-        default:
-            break;
-    }
-
-    GameManager<char> fourInRowGameManager(board,players);
-
-    fourInRowGameManager.run();
-
-    delete board;
-
-    for (auto & player : players){
-        delete player;
-    }
 }
 
 #endif
