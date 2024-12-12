@@ -1,7 +1,7 @@
 #ifndef _5X5X_O_H
 #define _5X5X_O_H
 
-#include "BoardGame_Classes.h"
+#include "../AssignmentDemo_WithBouns/BoardGame_Classes.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
@@ -16,8 +16,14 @@ private:
     int countThreeInARow(T symbol);
     bool isValidMove(int x, int y, T symbol);
 
+    char currentSymbol;
+    char winnerSymbol;
+    bool someOneWon;
 public:
     ThreeByThree_Board() {
+        someOneWon = false;
+        currentSymbol = 'X';
+        winnerSymbol = ' ';
         this->rows = this->columns = 3;
         this->board = new T*[this->rows];
         for (int i = 0; i < this->rows; i++) {
@@ -29,63 +35,77 @@ public:
         this->n_moves = 0;
     }
 
+    bool isThere_a_Winner(){
+        return someOneWon;
+    }
+
     // Core game functions
     bool update_board(int x, int y, T symbol) override {
         if (isValidMove(x,y,symbol)) {
             if (symbol == '.'){
                 this->n_moves--;
                 this->board[x][y] = '.';
+                DecideWhoWins();
             }
+
+            else if (someOneWon){
+                currentSymbol = symbol;
+                return true;
+            }
+
             else {
                 this->n_moves++;
                 this->board[x][y] = symbol;
+                currentSymbol = symbol;
             }
+            DecideWhoWins();
             return true;
         }
         return false;
     }
 
     void display_board() override {
-        cout << "\n";
         for (int i = 0; i < this->rows; i++) {
-            cout << " | ";
+            cout << "\n| ";
             for (int j = 0; j < this->columns; j++) {
-                cout << this->board[i][j] << " | ";
+                cout << "(" << i << "," << j << ")";
+                cout << setw(2) << this->board[i][j] << " |";
             }
-            cout << "\n";
-            if (i < this->rows - 1) {
-                cout << "-------------\n";
-            }
+            cout << "\n-----------------------------";
         }
         cout << endl;
     }
     bool is_win() override {
-        return countThreeInARow('X') > 0 || countThreeInARow('O') > 0;
+        return winnerSymbol == currentSymbol;
     }
 
     bool is_draw() override {
-        if (game_is_over()) {
+        if (this->n_moves == 9) {
             int count_X = countThreeInARow('X');
             int count_O = countThreeInARow('O');
             return count_X == count_O;
         }
         return false;
     }
-    string whoWon(const string& player1Name, const string& player2Name) {
+    void DecideWhoWins() {
         int count_X = countThreeInARow('X');
         int count_O = countThreeInARow('O');
 
-        if (game_is_over()) {
-            if (count_X > count_O) {
-                return player2Name;
-            } else if (count_O > count_X) {
-                return player1Name;
-            }
+        if (count_X > 0){
+            winnerSymbol = 'O';
+            someOneWon = true;
         }
-        return "";
+        else if (count_O > 0){
+            winnerSymbol = 'X';
+            someOneWon = true;
+        }
+        else{
+            someOneWon = false;
+            winnerSymbol = ' ';
+        }
     }
     bool game_is_over() override {
-        return countThreeInARow('X') > 0 || countThreeInARow('O') > 0 || this->n_moves == 9;
+        return is_draw() || is_win();
     }
 
 
@@ -104,6 +124,11 @@ public:
     ThreeByThree_HumanPlayer(string n,T symbol) : Player<T>(n,symbol){}
 
     void getmove(int& x, int& y) override {
+        if (dynamic_cast<ThreeByThree_Board<char>*>(this->boardPtr)->isThere_a_Winner()){
+            x = -1;
+            y = -1;
+            return;
+        }
         cout << "\nPlayer " << this->name << "'s turn (" << this->symbol << ")" << endl;
         cout << "Please enter your move x and y (0 to 2) separated by spaces: ";
 
@@ -120,12 +145,18 @@ private:
     int dimension;
 
 public:
-    ThreeByThree_RandomPlayer(T symbol) : Player<T>("Random Computer Player", symbol) {
+    ThreeByThree_RandomPlayer(T symbol) : Player<T>("Random Computer Player",symbol) {
         dimension = 3;
         srand(static_cast<unsigned int>(time(0)));
     }
 
     void getmove(int& x, int& y) override {
+        if (dynamic_cast<ThreeByThree_Board<char>*>(this->boardPtr)->isThere_a_Winner()){
+            x = -1;
+            y = -1;
+            return;
+        }
+
         x = rand() % dimension;
         y = rand() % dimension;
         while (!this->boardPtr->update_board(x, y, this->symbol)) {
@@ -192,6 +223,10 @@ int ThreeByThree_Board<T>::countThreeInARow(T symbol) {
 
 template <typename T>
 bool ThreeByThree_Board<T>::isValidMove(int x, int y, T symbol) {
+    if (x == -1 && y == -1){
+        return true;
+    }
+
     if (x < 0 || x >= this->rows || y < 0 || y >= this->columns) {
         return false;
     }
@@ -228,6 +263,7 @@ void RunBoardGame(){
     switch(choice){
         case 1:
             players[0] = new ThreeByThree_HumanPlayer<char>(player1,'X');
+            players[0]->setBoard(board);
             break;
         case 2:
             players[0] = new ThreeByThree_RandomPlayer<char>('X');
@@ -251,6 +287,7 @@ void RunBoardGame(){
     switch(choice){
         case 1:
             players[1] = new ThreeByThree_HumanPlayer<char>(player2,'O');
+            players[1]->setBoard(board);
             break;
         case 2:
             players[1] = new ThreeByThree_RandomPlayer<char>('O');

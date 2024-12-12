@@ -19,7 +19,7 @@ public:
 };
 
 template <typename T>
-class Ultimate_grid{
+class Ultimate_grid : public Board<T>{
 private:
     int n_moves=0;
 public:
@@ -151,46 +151,70 @@ void Ultimate_Random_Player<T>::getmove(int& x, int& y) {
 
 
 void RunBoardGame(){ // if you want to play the game in terminal
-    Player<char>* players[2];
-    Ultimate_grid<char> Grid;
+    int choice;
 
-    string playerXName, playerOName;
-    cout << "Enter Player X name: ";
-    cin >> playerXName;
-    players[0] = new Ultimate_Player<char>(playerXName, 'X');
+    Board<char> * board = new Ultimate_grid<char>();
+    Player<char> * players[2];
 
-    cout << "Enter Player O name: ";
-    cin >> playerOName;
-    players[1] = new Ultimate_Player<char>(playerOName, 'O');
-
-    Grid.display_board();
-    int counter=0;
-    int x, y;
-    while (!Grid.game_is_over()) {
-        for (int i : {0, 1}) {
-            players[i]->getmove(x, y);
-            counter++;
-            while (!Grid.update_board(x, y, players[i]->getsymbol())) {
-                cout << "Invalid move. Try again.\n";
-                players[i]->getmove(x, y);
-            }
-            Grid.display_board();
+    string player1,player2;
 
 
-            if (Grid.is_win()) {
-                cout << players[i]->getname() << " wins!\n";
-                 break;
-            }
+    cout << "Four in Row GameBoard2 \n";
 
-            if (Grid.is_draw()) {
-                cout << "It's a draw!\n";
-                break;
-            }
-        }
+    // Set up player 1
+    cout << "Enter Player 1 name (symbol is X): ";
+    cin >> player1;
+    cout << "Choose Player X type:\n";
+    cout << "1. Human\n";
+    cout << "2. Random Computer\n";
+    cout << "3. Smart Computer (AI)\n";
+    cin >> choice;
+
+    switch(choice){
+        case 1:
+            players[0] = new Ultimate_Player<char>(player1,'X');
+            break;
+        case 2:
+            players[0] = new Ultimate_Random_Player<char>('X');
+            players[0]->setBoard(board);
+            break;
+        case 3:
+        default:
+            break;
     }
 
-    delete players[0];
-    delete players[1];
+
+    cout << "Enter Player 2 name (symbol is O): ";
+    cin >> player2;
+    cout << "Choose Player O type:\n";
+    cout << "1. Human\n";
+    cout << "2. Random Computer\n";
+    cout << "3. Smart Computer (AI)\n";
+    cin >> choice;
+
+    switch(choice){
+        case 1:
+            players[1] = new Ultimate_Player<char>(player2,'O');
+            break;
+        case 2:
+            players[1] = new Ultimate_Random_Player<char>('O');
+            players[1]->setBoard(board);
+            break;
+        case 3:
+            break;
+        default:
+            break;
+    }
+
+    GameManager<char> fourInRowGameManager(board,players);
+
+    fourInRowGameManager.run();
+
+    delete board;
+
+    for (auto & player : players){
+        delete player;
+    }
 }
 
 #endif

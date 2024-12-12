@@ -1,7 +1,7 @@
 #ifndef _5X5X_O_H
 #define _5X5X_O_H
 
-#include "BoardGame_Classes.h"
+#include "../AssignmentDemo_WithBouns/BoardGame_Classes.h"
 #include <iostream>
 #include <iomanip>
 
@@ -15,9 +15,16 @@ class FiveByFive_Board : public Board<T> {
 private:
     int countThreeInARow(T symbol);
     bool isValidMove(int x, int y, T symbol);
-
+    bool playersTurnsFinished;
+    bool playerTurn;
 public:
+    bool isPlayerTurnsFinished(){
+        return playersTurnsFinished;
+    }
+
     FiveByFive_Board() {
+        playersTurnsFinished = false;
+        playerTurn = false;
         this->rows = this->columns = 5;
         this->board = new T*[this->rows];
         for (int i = 0; i < this->rows; i++) {
@@ -32,13 +39,26 @@ public:
     // Core game functions
     bool update_board(int x, int y, T symbol) override {
         if (isValidMove(x,y,symbol)) {
+            playerTurn = !playerTurn;
             if (symbol == '.'){
                 this->n_moves--;
                 this->board[x][y] = '.';
+                if (this->n_moves < 24){
+                    playersTurnsFinished = false;
+                }
             }
+
+            else if (playersTurnsFinished){
+                this->n_moves = max(this->n_moves,25);
+                return true;
+            }
+
             else {
                 this->n_moves++;
                 this->board[x][y] = symbol;
+                if (this->n_moves == 24){
+                    playersTurnsFinished = true;
+                }
             }
             return true;
         }
@@ -58,27 +78,34 @@ public:
     }
 
     bool is_win() override {
-        int count_X = countThreeInARow('X');
-        int count_O = countThreeInARow('O');
-        if (this->n_moves == 24) {
-            return count_X != count_O;
+        if (this->n_moves == 25) {
+            int count_X = countThreeInARow('X');
+            int count_O = countThreeInARow('O');
+            if (playerTurn){
+                return count_X > count_O;
+            }
+            else if (!playerTurn){
+                return count_X < count_O;
+            }
         }
         return false;
     }
 
     bool is_draw() override {
-        if (this->n_moves == 24) {
+        if (this->n_moves == 25) {
             int count_X = countThreeInARow('X');
             int count_O = countThreeInARow('O');
             return count_X == count_O;
         }
         return false;
     }
+
     string whoWon(const string& player1Name, const string& player2Name) {
         int count_X = countThreeInARow('X');
         int count_O = countThreeInARow('O');
 
-        if (this->n_moves == 24) {  
+        if (this->n_moves == 24) {
+
             if (count_X > count_O) {
                 return player1Name;  
             } else if (count_O > count_X) {
@@ -87,8 +114,9 @@ public:
         }
         return ""; 
     }
+
     bool game_is_over() override {
-        return this->n_moves == 24;
+        return is_draw() || is_win();
     }
 
 
@@ -109,6 +137,11 @@ public:
     FiveByFive_HumanPlayer(string n,T symbol) : Player<T>(n,symbol){}
 
     void getmove(int& x, int& y) override {
+        if (dynamic_cast<FiveByFive_Board<char>*>(this->boardPtr)->isPlayerTurnsFinished()){
+            x = -1;
+            y = -1;
+            return;
+        }
         cout << "\nPlayer " << this->name << "'s turn (" << this->symbol << ")" << endl;
         cout << "Please enter your move x and y (0 to 4) separated by spaces: ";
 
@@ -125,12 +158,18 @@ private:
     int dimension;
 
 public:
-    FiveByFive_RandomPlayer(T symbol) : Player<T>("Random Computer Player", symbol) {
+    FiveByFive_RandomPlayer(T symbol) : Player<T>(symbol) {
+        this->name = "Random Computer Player";
         dimension = 5;
         srand(static_cast<unsigned int>(time(0)));
     }
 
     void getmove(int& x, int& y) override {
+        if (dynamic_cast<FiveByFive_Board<char>*>(this->boardPtr)->isPlayerTurnsFinished()){
+            x = -1;
+            y = -1;
+            return;
+        }
         x = rand() % dimension;
         y = rand() % dimension;
         while (!this->boardPtr->update_board(x, y, this->symbol)) {
@@ -197,6 +236,9 @@ int FiveByFive_Board<T>::countThreeInARow(T symbol) {
 
 template <typename T>
 bool FiveByFive_Board<T>::isValidMove(int x, int y, T symbol) {
+    if (x == -1 && y == -1){
+        return true;
+    }
     if (x < 0 || x >= this->rows || y < 0 || y >= this->columns) {
         return false;
     }
@@ -233,6 +275,7 @@ void RunBoardGame(){
     switch(choice){
         case 1:
             players[0] = new FiveByFive_HumanPlayer<char>(player1,'X');
+            players[0]->setBoard(board);
             break;
         case 2:
             players[0] = new FiveByFive_RandomPlayer<char>('X');
@@ -256,6 +299,7 @@ void RunBoardGame(){
     switch(choice){
         case 1:
             players[1] = new FiveByFive_HumanPlayer<char>(player2,'O');
+            players[1]->setBoard(board);
             break;
         case 2:
             players[1] = new FiveByFive_RandomPlayer<char>('O');
