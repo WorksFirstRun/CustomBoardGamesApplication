@@ -15,11 +15,11 @@ class BoardSetup{
    static void RunBoardGame1();
    static void RunBoardGame2();
    static void RunBoardGame3();
-    static void RunBoardGame4();
-    static void RunBoardGame5();
-    static void RunBoardGame6();
-    static void RunBoardGame7();
-    static void RunBoardGame8();
+   static void RunBoardGame4();
+   static void RunBoardGame5();
+   static void RunBoardGame6();
+   static void RunBoardGame7();
+   static void RunBoardGame8();
 
 };
 
@@ -33,7 +33,7 @@ void RunBoardGame1() {
     string player1,player2;
 
 
-    cout << "Four in Row GameBoard2 \n";
+    cout << "Pyramid Tic-Tac-Toe, GameBoard1 \n";
 
     // Set up player 1
     cout << "Enter Player 1 name (symbol is X): ";
@@ -87,6 +87,7 @@ void RunBoardGame1() {
     }
 
 }
+
 void RunBoardGame3() {
     int choice;
 
@@ -150,6 +151,7 @@ void RunBoardGame3() {
         delete player;
     }
 }
+
 void RunBoardGame2() {
     int choice;
 
@@ -159,7 +161,7 @@ void RunBoardGame2() {
     string player1,player2;
 
 
-    cout << "Four in Row GameBoard2 \n";
+    cout << "Four in a Row GameBoard2 \n";
 
     // Set up player 1
     cout << "Enter Player 1 name (symbol is X): ";
@@ -230,12 +232,11 @@ void RunBoardGame4() {
     string player1,player2;
 
 
-    cout << "Four in Row GameBoard2 \n";
+    cout << "Word Grid GameBoard4 \n";
 
-    // Set up player 1
-    cout << "Enter Player 1 name (symbol is X): ";
+    cout << "Enter Player 1 name: ";
     cin >> player1;
-    cout << "Choose Player X type:\n";
+    cout << "Choose Player type:\n";
     cout << "1. Human\n";
     cout << "2. Random Computer\n";
     cin >> choice;
@@ -253,9 +254,9 @@ void RunBoardGame4() {
     }
 
 
-    cout << "Enter Player 2 name (symbol is O): ";
+    cout << "Enter Player 2 name: ";
     cin >> player2;
-    cout << "Choose Player O type:\n";
+    cout << "Choose Player type:\n";
     cout << "1. Human\n";
     cout << "2. Random Computer\n";
     cin >> choice;
@@ -299,7 +300,6 @@ void RunBoardGame5() {
 
     cout << "Numerical Tic Tac Toe GameBoard5 \n";
 
-    // Set up player 1
     cout << "Enter Player 1 name (numbers are odd (1,3,5,7,9) ): ";
     cin >> player1;
     cout << "Choose Player 1 type:\n";
@@ -310,10 +310,10 @@ void RunBoardGame5() {
 
     switch(choice){
         case 1:
-            players_copy[0] = new NumericalTTT_Player<int>(player1,'O');
+            players_copy[0] = new NumericalTTT_Player<int>(player1,'O'); // O here means ODD
             break;
         case 2:
-            players_copy[0] = new NumericalTTT_RandomPlayer<int>("Random Computer",'O');
+            players_copy[0] = new NumericalTTT_RandomPlayer<int>("Random Computer",'O'); // O here means ODD
             players_copy[0]->setBoard(board);
             break;
         case 3:
@@ -347,6 +347,11 @@ void RunBoardGame5() {
             break;
     }
 
+
+    // the following approach for making the ai is because i want each ai player to have a reference to the other
+    // player numbers list, i can only achieve that when the player finished full player choosing
+    // another reason for using a players_copy is the need for using some methods in the players class itself
+    // that is not available in the player abstract class
     players[0] = players_copy[0];
     players[1] = players_copy[1];
 
@@ -405,9 +410,8 @@ void RunBoardGame6() {
     string player1,player2;
 
 
-    cout << "Five by Five XO GameBoard3 \n";
+    cout << "Inverse Tic_Tac_Toe GameBoard6 \n";
 
-    // Set up player 1
     cout << "Enter Player 1 name (symbol is X): ";
     cin >> player1;
     cout << "Choose Player X type:\n";
@@ -463,6 +467,8 @@ void RunBoardGame6() {
 void RunBoardGame7() {
     int choice;
 
+    // the reason for using shared pointer is the need for each token to have the same reference to the board
+    // since iam making each token have the responsability to change its position on the board
     Player<Token> * players[2];
 
     auto boardPtr = std::make_shared<FourByFourTTT_Board<Token>>();
@@ -476,9 +482,8 @@ void RunBoardGame7() {
     string player1,player2;
 
 
-    cout << "Four by Four XO GameBoard5 \n";
+    cout << "Four by Four Tic Tac Toe GameBoard7\n";
 
-    // Set up player 1
     cout << "Enter Player 1 name (symbol is X): ";
     cin >> player1;
     cout << "Choose Player X type:\n";
