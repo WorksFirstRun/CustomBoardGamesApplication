@@ -21,6 +21,7 @@ template <typename T>
 class Ultimate_grid:public Board<T>{
 private:
     int n_moves=0;
+    int current_board = -1;  // -1 means any board can be played
 public:
     X_O_Board<T>*Big_board[9];
     map<int,char>Win;
@@ -34,7 +35,18 @@ public:
     bool Is_valid(int &x,int &y,T symbol);
     void Set_win(int position,T symbol);
     ~Ultimate_grid() ;
+    T** GetBoard() {
+        return this->board;
+    }
+    int get_current_board() {
 
+        return current_board;
+    }
+    bool is_sub_board_complete(int boardIndex) {
+
+        if (boardIndex < 0 || boardIndex >= 9) return false;
+        return Win[boardIndex] != ' ';
+    }
 };
 template <typename T>
 void Ultimate_grid<T>::Set_win(int position,T symbol) {
@@ -63,6 +75,11 @@ bool Ultimate_grid<T>::update_board(int x, int y, T symbol) {
         int subGrid = (x / 3) * 3 + (y / 3);
         int localx = x % 3;
         int localy = y % 3;
+
+        if (current_board != -1 && subGrid != current_board) {
+            return false;
+        }
+
         if (Big_board[subGrid]->Is_valid(localx, localy, symbol)) {
             Big_board[subGrid]->update_board(localx, localy, symbol);
             if (Big_board[subGrid]->is_win() && Win[subGrid] == ' ') {
@@ -70,6 +87,12 @@ bool Ultimate_grid<T>::update_board(int x, int y, T symbol) {
             }
             if (Big_board[subGrid]->is_draw() && Win[subGrid] == ' ') {
                 Set_win(subGrid, 'D');
+            }
+
+
+            current_board = (localx * 3 + localy);
+            if (Win[current_board] != ' ') {
+                current_board = -1;
             }
 
             this->n_moves++;
@@ -162,7 +185,7 @@ public:
     void InitializeGame(string player1, string player2, PlayerType player1Type, PlayerType player2Type) {
         ClearGameState();
         board = new Ultimate_grid<char>();
-        
+
         switch(player1Type) {
             case Human:
                 players[0] = new Ultimate_Player<char>(player1, 'X');
@@ -172,7 +195,7 @@ public:
                 break;
         }
         players[0]->setBoard(board);
-        
+
         switch(player2Type) {
             case Human:
                 players[1] = new Ultimate_Player<char>(player2, 'O');
@@ -182,7 +205,7 @@ public:
                 break;
         }
         players[1]->setBoard(board);
-        
+
         playersType[0] = player1Type;
         playersType[1] = player2Type;
     }
@@ -199,13 +222,6 @@ public:
             throw std::runtime_error("Game is not Initialized");
         }
         return board->get_current_board();
-    }
-
-    vector<vector<char>> GetBigBoard() {
-        if (!isInitialized()) {
-            throw std::runtime_error("Game is not Initialized");
-        }
-        return board->get_big_board();
     }
 
     bool IsSubBoardComplete(int boardIndex) {
@@ -299,9 +315,6 @@ public:
         }
     }
 
-    bool isInitialized() {
-        return board != nullptr && players[0] != nullptr && players[1] != nullptr;
-    }
 
     ~BoardGame8_Wrapper() {
         ClearGameState();

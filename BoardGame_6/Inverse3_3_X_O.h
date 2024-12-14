@@ -1,17 +1,18 @@
-#ifndef INVERSE3_3_X_O_H
-#define INVERSE3_3_X_O_H
+#ifndef Misere3_3_X_O_H
+#define Misere3_3_X_O_H
 
 #include "../AssignmentDemo_WithBouns/BoardGame_Classes.h"
 #include <iostream>
 #include <iomanip>
 #include <string>
-template <typename T> class ThreeByThree_Board;
-template <typename T> class ThreeByThree_HumanPlayer;
-template <typename T> class ThreeByThree_RandomPlayer;
+#include <vector>
+template <typename T> class MisereBoard;
+template <typename T> class Misere_HumanPlayer;
+template <typename T> class Misere_RandomPlayer;
 
 //================= Board Class =================
 template <typename T>
-class ThreeByThree_Board : public Board<T> {
+class MisereBoard : public Board<T> {
 private:
     int countThreeInARow(T symbol);
     bool isValidMove(int x, int y, T symbol);
@@ -20,7 +21,7 @@ private:
     char winnerSymbol;
     bool someOneWon;
 public:
-    ThreeByThree_Board() {
+    MisereBoard() {
         someOneWon = false;
         currentSymbol = 'X';
         winnerSymbol = ' ';
@@ -113,18 +114,21 @@ public:
         return this->board;
     }
 
+    T** GetBoard() {
+        return this->board;
+    }
 
 };
 
 //================= Human Player Class =================
 template <typename T>
-class ThreeByThree_HumanPlayer : public Player<T> {
+class Misere_HumanPlayer : public Player<T> {
 public:
 
-    ThreeByThree_HumanPlayer(string n,T symbol) : Player<T>(n,symbol){}
+    Misere_HumanPlayer(string n,T symbol) : Player<T>(n,symbol){}
 
     void getmove(int& x, int& y) override {
-        if (dynamic_cast<ThreeByThree_Board<char>*>(this->boardPtr)->isThere_a_Winner()){
+        if (dynamic_cast<MisereBoard<char>*>(this->boardPtr)->isThere_a_Winner()){
             x = -1;
             y = -1;
             return;
@@ -140,18 +144,18 @@ public:
 
 //================= Random Player Class =================
 template <typename T>
-class ThreeByThree_RandomPlayer : public Player<T> {
+class Misere_RandomPlayer : public Player<T> {
 private:
     int dimension;
 
 public:
-    ThreeByThree_RandomPlayer(T symbol) : Player<T>("Random Computer Player",symbol) {
+    Misere_RandomPlayer(T symbol) : Player<T>("Random Computer Player",symbol) {
         dimension = 3;
         srand(static_cast<unsigned int>(time(0)));
     }
 
     void getmove(int& x, int& y) override {
-        if (dynamic_cast<ThreeByThree_Board<char>*>(this->boardPtr)->isThere_a_Winner()){
+        if (dynamic_cast<MisereBoard<char>*>(this->boardPtr)->isThere_a_Winner()){
             x = -1;
             y = -1;
             return;
@@ -171,7 +175,7 @@ public:
 
 //================= Helper Function Implementations =================
 template <typename T>
-int ThreeByThree_Board<T>::countThreeInARow(T symbol) {
+int MisereBoard<T>::countThreeInARow(T symbol) {
     int count = 0;
 
     // Check horizontal three-in-a-row
@@ -222,7 +226,7 @@ int ThreeByThree_Board<T>::countThreeInARow(T symbol) {
 }
 
 template <typename T>
-bool ThreeByThree_Board<T>::isValidMove(int x, int y, T symbol) {
+bool MisereBoard<T>::isValidMove(int x, int y, T symbol) {
     if (x == -1 && y == -1 && someOneWon){
         return true;
     }
@@ -241,7 +245,7 @@ bool ThreeByThree_Board<T>::isValidMove(int x, int y, T symbol) {
 
 class BoardGame6_Wrapper {
 private:
-    Misere_grid<char>* board;
+    MisereBoard<char>* board;
     Player<char>* players[2];
     bool isInitialized();
 
@@ -259,24 +263,24 @@ public:
 
     void InitializeGame(string player1, string player2, PlayerType player1Type, PlayerType player2Type) {
         ClearGameState();
-        board = new Misere_grid<char>();
+        board = new MisereBoard<char>();
         
         switch(player1Type) {
             case Human:
-                players[0] = new Misere_Player<char>(player1, 'X');
+                players[0] = new Misere_HumanPlayer<char>(player1, 'X');
                 break;
             case Random:
-                players[0] = new Misere_Random_Player<char>('X');
+                players[0] = new Misere_RandomPlayer<char>('X');
                 break;
         }
         players[0]->setBoard(board);
         
         switch(player2Type) {
             case Human:
-                players[1] = new Misere_Player<char>(player2, 'O');
+                players[1] = new Misere_HumanPlayer<char>(player2, 'O');
                 break;
             case Random:
-                players[1] = new Misere_Random_Player<char>('O');
+                players[1] = new Misere_RandomPlayer<char>('O');
                 break;
         }
         players[1]->setBoard(board);
@@ -376,9 +380,7 @@ public:
         }
     }
 
-    bool isInitialized() {
-        return board != nullptr && players[0] != nullptr && players[1] != nullptr;
-    }
+
 
     ~BoardGame6_Wrapper() {
         ClearGameState();

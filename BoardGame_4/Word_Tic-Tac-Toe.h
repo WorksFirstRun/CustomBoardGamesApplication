@@ -1,4 +1,3 @@
-
 #ifndef CUSTOMBOARDGAMESAPPLICATION_WORD_TIC_TAC_TOE_H
 #define CUSTOMBOARDGAMESAPPLICATION_WORD_TIC_TAC_TOE_H
 
@@ -22,6 +21,9 @@ public:
     bool Is_valid(int &x,int &y,T symbol);
     ~Word_grid();
 
+    T** GetBoard() {
+        return this->board;
+    }
 };
 template<typename T>
 class Word_player:public Player<T>{
@@ -169,6 +171,147 @@ Word_grid<T>::~Word_grid() {
     delete[] this->board;
 }
 
+class BoardGame4_Wrapper {
+private:
+    Word_grid<char>* board;
+    Player<char>* players[2];
+    bool isInitialized();
 
+public:
+    enum PlayerType {
+        Human,
+        Random
+    };
+    PlayerType playersType[2];
+
+    BoardGame4_Wrapper() : board(nullptr) {
+        players[0] = nullptr;
+        players[1] = nullptr;
+    }
+
+    void InitializeGame(string player1, string player2, PlayerType player1Type, PlayerType player2Type) {
+        ClearGameState();
+        board = new Word_grid<char>();
+        
+        switch(player1Type) {
+            case Human:
+                players[0] = new Word_player<char>(player1, 'X');
+                break;
+            case Random:
+                players[0] = new Word_Random_Player<char>('X');
+                break;
+        }
+        players[0]->setBoard(board);
+        
+        switch(player2Type) {
+            case Human:
+                players[1] = new Word_player<char>(player2, 'O');
+                break;
+            case Random:
+                players[1] = new Word_Random_Player<char>('O');
+                break;
+        }
+        players[1]->setBoard(board);
+        
+        playersType[0] = player1Type;
+        playersType[1] = player2Type;
+    }
+
+    char** GetBoard() {
+        if (!isInitialized()) {
+            throw std::runtime_error("Game is not Initialized");
+        }
+        return board->GetBoard();
+    }
+
+    string GetPlayer1Name() {
+        if (!isInitialized()) {
+            throw std::runtime_error("Game is not Initialized");
+        }
+        return players[0]->getname();
+    }
+
+    string GetPlayer2Name() {
+        if (!isInitialized()) {
+            throw std::runtime_error("Game is not Initialized");
+        }
+        return players[1]->getname();
+    }
+
+    void GetPlayer1Move(int& x, int& y) {
+        if (!isInitialized()) {
+            throw std::runtime_error("Game is not Initialized");
+        }
+        if (playersType[0] == Human) {
+            return;
+        }
+        players[0]->getmove(x, y);
+    }
+
+    void GetPlayer2Move(int& x, int& y) {
+        if (!isInitialized()) {
+            throw std::runtime_error("Game is not Initialized");
+        }
+        if (playersType[1] == Human) {
+            return;
+        }
+        players[1]->getmove(x, y);
+    }
+
+    void Player1PerformMove(int x, int y) {
+        if (!isInitialized()) {
+            throw std::runtime_error("Game is not Initialized");
+        }
+        if (!board->update_board(x, y, players[0]->getsymbol())) {
+            throw std::runtime_error("Invalid move for Player 1");
+        }
+    }
+
+    void Player2PerformMove(int x, int y) {
+        if (!isInitialized()) {
+            throw std::runtime_error("Game is not Initialized");
+        }
+        if (!board->update_board(x, y, players[1]->getsymbol())) {
+            throw std::runtime_error("Invalid move for Player 2");
+        }
+    }
+
+    bool isWin() {
+        if (!isInitialized()) {
+            throw std::runtime_error("Game is not Initialized");
+        }
+        return board->is_win();
+    }
+
+    bool isDraw() {
+        if (!isInitialized()) {
+            throw std::runtime_error("Game is not Initialized");
+        }
+        return board->is_draw();
+    }
+
+    bool isGameOver() {
+        if (!isInitialized()) {
+            throw std::runtime_error("Game is not Initialized");
+        }
+        return board->game_is_over();
+    }
+
+    void ClearGameState() {
+        if (isInitialized()) {
+            delete board;
+            board = nullptr;
+            delete players[0];
+            players[0] = nullptr;
+            delete players[1];
+            players[1] = nullptr;
+        }
+    }
+
+
+    ~BoardGame4_Wrapper() {
+        ClearGameState();
+    }
+};
 
 #endif
