@@ -76,7 +76,7 @@ bool X_O_Board<T>::update_board(int x, int y, T mark) {
 // Display the board and the pieces on it
 template <typename T>
 void X_O_Board<T>::display_board() {
-    for (int i = 3*(position/3); i < 3*(position/3)+3; i++) {
+    for (int i = 3*(position/3); i < (3*(position/3)+3); i++) {
 
         cout << "\n| ";
         for (int j = 3*(position%3); j < 3*(position%3)+3; j++) {

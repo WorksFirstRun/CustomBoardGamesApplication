@@ -85,7 +85,7 @@ void Ultimate_grid<T>::display_board() {
     for(int i=0;i<9;i++){
         Big_board[i]->display_board();
     }
-    cout.flush();
+    cout << endl;
 }
 template <typename T>
 bool Ultimate_grid<T>::is_win() {

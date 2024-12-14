@@ -110,6 +110,7 @@ void RunBoardGame3() {
     switch(choice){
         case 1:
             players[0] = new FiveByFive_HumanPlayer<char>(player1,'X');
+            players[0]->setBoard(board);
             break;
         case 2:
             players[0] = new FiveByFive_RandomPlayer<char>('X');
@@ -131,6 +132,7 @@ void RunBoardGame3() {
     switch(choice){
         case 1:
             players[1] = new FiveByFive_HumanPlayer<char>(player2,'O');
+            players[1]->setBoard(board);
             break;
         case 2:
             players[1] = new FiveByFive_RandomPlayer<char>('O');
@@ -422,6 +424,7 @@ void RunBoardGame6() {
     switch(choice){
         case 1:
             players[0] = new ThreeByThree_HumanPlayer<char>(player1,'X');
+            players[0]->setBoard(board);
             break;
         case 2:
             players[0] = new ThreeByThree_RandomPlayer<char>('X');
@@ -443,6 +446,7 @@ void RunBoardGame6() {
     switch(choice){
         case 1:
             players[1] = new ThreeByThree_HumanPlayer<char>(player2,'O');
+            players[1]->setBoard(board);
             break;
         case 2:
             players[1] = new ThreeByThree_RandomPlayer<char>('O');
