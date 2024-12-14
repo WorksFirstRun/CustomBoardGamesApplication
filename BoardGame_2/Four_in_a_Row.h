@@ -1,4 +1,3 @@
-
 #ifndef CUSTOMBOARDGAMESAPPLICATION_FOUR_IN_A_ROW_H
 #define CUSTOMBOARDGAMESAPPLICATION_FOUR_IN_A_ROW_H
 
@@ -90,6 +89,50 @@ public:
 
     ~BoardGame2_Wrapper();
 
+    bool IsValidMove(int x, int y) {
+        if (!isInitialized()) {
+            throw std::runtime_error("Game is not Initialized");
+        }
+        return board->isMoveValid(x, y, players[0]->getsymbol());
+    }
+
+    void InitializeGame(string player1Name, string player2Name, PlayerType player1Type, PlayerType player2Type) {
+        ClearGameState();
+        board = new Four_in_a_Row_Board<char>();
+        
+        switch(player1Type) {
+            case Human:
+                players[0] = new Four_in_a_Row_Player<char>(player1Name, 'X');
+                break;
+            case Randomizer:
+                players[0] = new Four_in_a_Row_RandomPlayer<char>('X');
+                break;
+            case AI:
+                players[0] = new FourInRowMinMax<char>('X', 'O');
+                break;
+        }
+        players[0]->setBoard(board);
+        
+        switch(player2Type) {
+            case Human:
+                players[1] = new Four_in_a_Row_Player<char>(player2Name, 'O');
+                break;
+            case Randomizer:
+                players[1] = new Four_in_a_Row_RandomPlayer<char>('O');
+                break;
+            case AI:
+                players[1] = new FourInRowMinMax<char>('O', 'X');
+                break;
+        }
+        players[1]->setBoard(board);
+    }
+
+    int GetMovesPlayed() {
+        if (!isInitialized()) {
+            throw std::runtime_error("Game is not Initialized");
+        }
+        return board->GetMovesPlayedNumber();
+    }
 
 };
 
