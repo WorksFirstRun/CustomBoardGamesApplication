@@ -52,6 +52,8 @@ public:
 
     void getmove(int &x,int &y) override;
 
+    void SetSymbol(int symbol);
+
 };
 
 
@@ -275,6 +277,11 @@ void NumericalTTT_Player<T>::getmove(int &x, int &y) {
     this->RemoveUsedNumber(this->symbol);
 }
 
+template<typename T>
+void NumericalTTT_Player<T>::SetSymbol(int symbol) {
+    this->symbol = symbol;
+}
+
 /// end of NumericalTTT_Player ----------------------------------------------------|
 
 
@@ -316,123 +323,11 @@ void NumericalTTT_RandomPlayer<T>::getmove(int &x, int &y) {
 /// end of RandomPlayer Implementation -----------------------------------|
 
 
-void RunBoardGame(){ // if you want to play the game in terminal
-    int choice;
-
-    Board<int> * board = new NumericalTTT_Board<int>();
-    Player<int> * players[2];
-    NumericalTTT_CommonPlayerFunctions<int> * players_copy[2];
-    NumericalTTT_MinMaxPlayer<int> * ai_players[2];
-    bool ai_1 = false;
-    bool ai_2 = false;
-
-    string player1,player2;
-
-
-    cout << "Numerical Tic Tac Toe GameBoard5 \n";
-
-    // Set up player 1
-    cout << "Enter Player 1 name (numbers are odd (1,3,5,7,9) ): ";
-    cin >> player1;
-    cout << "Choose Player 1 type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice){
-        case 1:
-            players_copy[0] = new NumericalTTT_Player<int>(player1,'O');
-            break;
-        case 2:
-            players_copy[0] = new NumericalTTT_RandomPlayer<int>("Random Computer",'O');
-            players_copy[0]->setBoard(board);
-            break;
-        case 3:
-            ai_1 = true;
-           break;
-        default:
-            break;
-    }
-
-
-    cout << "Enter Player 2 name (numbers are even (2,4,6,8) ): ";
-    cin >> player2;
-    cout << "Choose Player 2 type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice){
-        case 1:
-            players_copy[1] = new NumericalTTT_Player<int>(player2,'E');
-            break;
-        case 2:
-            players_copy[1] = new NumericalTTT_RandomPlayer<int>("Random Computer",'E');
-            players_copy[1]->setBoard(board);
-            break;
-        case 3:
-            ai_2 = true;
-            break;
-        default:
-            break;
-    }
-
-    players[0] = players_copy[0];
-    players[1] = players_copy[1];
-
-    if (ai_1 && ai_2){
-        ai_players[0] = new NumericalTTT_MinMaxPlayer<int>('O');
-        ai_players[1] = new NumericalTTT_MinMaxPlayer<int>('E');
-
-        ai_players[0]->setBoard(board);
-        ai_players[1]->setBoard(board);
-
-        ai_players[0]->SetOpponentNumbers(&ai_players[1]->GetAvailableNumbers());
-        ai_players[1]->SetOpponentNumbers(&ai_players[0]->GetAvailableNumbers());
-        players[0] = ai_players[0];
-        players[1] = ai_players[1];
-    }
-
-    else if (ai_1){
-        ai_players[0] = new NumericalTTT_MinMaxPlayer<int>('O');
-
-        ai_players[0]->setBoard(board);
-
-        ai_players[0]->SetOpponentNumbers(players_copy[1]->getAvailableNumbers());
-        players[0] = ai_players[0];
-    }
-
-    else if (ai_2){
-        ai_players[1] = new NumericalTTT_MinMaxPlayer<int>('E');
-
-        ai_players[1]->setBoard(board);
-
-
-        ai_players[1]->SetOpponentNumbers(players_copy[0]->getAvailableNumbers());
-        players[1] = ai_players[1];
-    }
-
-
-
-
-    GameManager<int> fourInRowGameManager(board, players);
-
-    fourInRowGameManager.run();
-
-    delete board;
-
-    for (auto & player : players){
-        delete player;
-    }
-}
-
 
 /// Implementation of the Wrapper class
 
 bool BoardGame5_Wrapper::isInitialized() {
-    return board != nullptr || players[0] != nullptr || players[1] != nullptr;
+    return board != nullptr && players[0] != nullptr && players[1] != nullptr;
 }
 
 void
@@ -619,8 +514,8 @@ void BoardGame5_Wrapper::GetPlayer1Move(int &x, int &y,int &symbol) {
         throw runtime_error("Game is Not initialized ");
     }
 
-    if (playersType[0]){
-        // pass since we will control the flow of this inside the UI
+    if (playersType[0] == Human){
+        dynamic_cast<NumericalTTT_Player<int>*>(players[0])->SetSymbol(symbol);
         return;
     }
 
@@ -635,8 +530,8 @@ void BoardGame5_Wrapper::GetPlayer2Move(int &x, int &y,int &symbol) {
         throw runtime_error("Game is Not initialized ");
     }
 
-    if (playersType[1]){
-        // pass since we will control the flow of this inside the UI
+    if (playersType[1] == Human){
+        dynamic_cast<NumericalTTT_Player<int>*>(players[1])->SetSymbol(symbol);
         return;
     }
 

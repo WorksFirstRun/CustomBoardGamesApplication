@@ -306,7 +306,26 @@ Four_in_a_Row_RandomPlayer<T>::Four_in_a_Row_RandomPlayer(T symbol) : RandomPlay
 
 template<typename T>
 void Four_in_a_Row_RandomPlayer<T>::getmove(int &x, int &y) {
-    y = rand() % this->dimension;
+    auto board = dynamic_cast<Four_in_a_Row_Board<char>*>(this->boardPtr);
+    vector<int> availableColumns;
+    auto Rows = board->GetCurrentRowOfEachColumn();
+    int col;
+    for (col = 0 ; col < 7 ; col++) {
+        if(Rows[col] >= 0) {
+            availableColumns.push_back(col);
+        }
+    }
+
+    if(availableColumns.empty()) {
+        x = -1;
+        y = -1;
+        return;
+    }
+
+    int randomIndex = rand() % availableColumns.size();
+    y = availableColumns[randomIndex];
+
+    x = Rows[col];
 }
 
 
@@ -314,76 +333,6 @@ void Four_in_a_Row_RandomPlayer<T>::getmove(int &x, int &y) {
 /// --> End of RandomPlayer Implementation|
 /// --------------------------------------|
 
-
-
-void RunBoardGame(){ // if you want to play the game in terminal
-    int choice;
-
-    Board<char> * board = new Four_in_a_Row_Board<char>();
-    Player<char> * players[2];
-
-    string player1,player2;
-
-
-    cout << "Four in Row GameBoard2 \n";
-
-    // Set up player 1
-    cout << "Enter Player 1 name (symbol is X): ";
-    cin >> player1;
-    cout << "Choose Player X type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice){
-        case 1:
-            players[0] = new Four_in_a_Row_Player<char>(player1,'X');
-            break;
-        case 2:
-            players[0] = new Four_in_a_Row_RandomPlayer<char>('X');
-            break;
-        case 3:
-            players[0] = new FourInRowMinMax<char>('X','O');
-            players[0]->setBoard(board);
-        default:
-            break;
-    }
-
-
-    cout << "Enter Player 2 name (symbol is O): ";
-    cin >> player2;
-    cout << "Choose Player O type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice){
-        case 1:
-            players[1] = new Four_in_a_Row_Player<char>(player2,'O');
-            break;
-        case 2:
-            players[1] = new Four_in_a_Row_RandomPlayer<char>('O');
-            break;
-        case 3:
-            players[1] = new FourInRowMinMax<char>('O','X');
-            players[1]->setBoard(board);
-            break;
-        default:
-            break;
-    }
-
-    GameManager<char> fourInRowGameManager(board,players);
-
-    fourInRowGameManager.run();
-
-    delete board;
-
-    for (auto & player : players){
-        delete player;
-    }
-}
 
 /// Wrapper class to use in GUI
 /// Implementation of it below
@@ -402,6 +351,7 @@ void BoardGame2_Wrapper::InitializeGame(std::string player1, std::string player2
             break;
         case Randomizer:
             players[0] = new Four_in_a_Row_RandomPlayer<char>('X');
+            players[0]->setBoard(board);
             break;
         case AI:
             players[0] = new FourInRowMinMax<char>('X','O');
@@ -417,6 +367,7 @@ void BoardGame2_Wrapper::InitializeGame(std::string player1, std::string player2
             break;
         case Randomizer:
             players[1] = new Four_in_a_Row_RandomPlayer<char>('O');
+            players[1]->setBoard(board);
             break;
         case AI:
             players[1] = new FourInRowMinMax<char>('O','X');
@@ -541,7 +492,7 @@ void BoardGame2_Wrapper::ClearGameState() {
 }
 
 bool BoardGame2_Wrapper::isInitialized() {
-    return board != nullptr || players[0] != nullptr || players[1] != nullptr;
+    return board != nullptr && players[0] != nullptr && players[1] != nullptr;
 }
 
 BoardGame2_Wrapper::~BoardGame2_Wrapper(){

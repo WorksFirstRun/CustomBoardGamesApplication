@@ -1,76 +1,50 @@
-#include <iostream>
-#include "AssignmentDemo_WithBouns/BoardGame_Classes.h"
-#include "AssignmentDemo_WithBouns/3x3X_O.h"
-#include "AssignmentDemo_WithBouns/MinMaxPlayer.h"
+#include "Setup_games/games.h"
 
 using namespace std;
 
 int main() {
     int choice;
-    Player<char>* players[2];
-    Board<char>* B = new X_O_Board<char>();
-    string playerXName, player2Name;
+    cout << "Welcome to BoardGames Application\n";
+    cout<<"What Game do you want to play ? \n";
+    cout<<"1-Pyramid Tic-Tac-Toe \n";
+    cout<<"2-Four in a row Tic-Tac-Toe \n";
+    cout<<"3-5X5 Tic-Tac-Toe \n";
+    cout<<"4-Word Tic-Tac-Toe \n";
+    cout<<"5-Numerical Tic-Tac-Toe \n";
+    cout<<"6-Inverse Tic-Tac-Toe \n";
+    cout<<"7-Four by Four Tic-Tac-Toe \n";
+    cout<<"8-Ultimate Tic-Tac-Toe \n";
 
-    cout << "Welcome to FCAI X-O Game. :)\n";
-
-    // Set up player 1
-    cout << "Enter Player X name: ";
-    cin >> playerXName;
-    cout << "Choose Player X type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
+    cin>>choice;
 
     switch(choice) {
         case 1:
-            players[0] = new X_O_Player<char>(playerXName, 'X');
+            RunBoardGame1();
             break;
         case 2:
-            players[0] = new X_O_Random_Player<char>('X');
+            RunBoardGame2();
             break;
         case 3:
-            players[0] = new X_O_MinMax_Player<char>('X');
-            players[0]->setBoard(B);
+            RunBoardGame3();
+            break;
+        case 4:
+            RunBoardGame4();
+            break;
+        case 5:
+            RunBoardGame5();
+            break;
+        case 6:
+            RunBoardGame6();
+            break;
+        case 7:
+            RunBoardGame7();
+            break;
+        case 8:
+            RunBoardGame8();
             break;
         default:
-            cout << "Invalid choice for Player 1. Exiting the game.\n";
-            return 1;
-    }
-
-    // Set up player 2
-    cout << "Enter Player 2 name: ";
-    cin >> player2Name;
-    cout << "Choose Player 2 type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice) {
-        case 1:
-            players[1] = new X_O_Player<char>(player2Name, 'O');
+            cout << "Invalid choice, Try Again\n";
             break;
-        case 2:
-            players[1] = new X_O_Random_Player<char>('O');
-            break;
-        case 3:
-            players[1] = new X_O_MinMax_Player<char>('O');
-            players[1]->setBoard(B);
-            break;
-        default:
-            cout << "Invalid choice for Player 2. Exiting the game.\n";
-            return 1;
-    }
-
-    // Create the game manager and run the game
-    GameManager<char> x_o_game(B, players);
-    x_o_game.run();
-
-    // Clean up
-    delete B;
-    for (int i = 0; i < 2; ++i) {
-        delete players[i];
     }
 
     return 0;
