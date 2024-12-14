@@ -5,26 +5,31 @@
 #include <iostream>
 #include <iomanip>
 #include <string>
-template <typename T> class ThreeByThree_Board;
-template <typename T> class ThreeByThree_HumanPlayer;
-template <typename T> class ThreeByThree_RandomPlayer;
+
+// Forward declarations
+template <typename T> class FiveByFive_Board;
+template <typename T> class FiveByFive_HumanPlayer;
+template <typename T> class FiveByFive_RandomPlayer;
+
+// Wrapper class for C++/CLI
 
 //================= Board Class =================
 template <typename T>
-class ThreeByThree_Board : public Board<T> {
+class FiveByFive_Board : public Board<T> {
 private:
     int countThreeInARow(T symbol);
     bool isValidMove(int x, int y, T symbol);
-
-    char currentSymbol;
-    char winnerSymbol;
-    bool someOneWon;
+    bool playersTurnsFinished;
+    bool playerTurn;
 public:
-    ThreeByThree_Board() {
-        someOneWon = false;
-        currentSymbol = 'X';
-        winnerSymbol = ' ';
-        this->rows = this->columns = 3;
+    bool isPlayerTurnsFinished(){
+        return playersTurnsFinished;
+    }
+
+    FiveByFive_Board() {
+        playersTurnsFinished = false;
+        playerTurn = false;
+        this->rows = this->columns = 5;
         this->board = new T*[this->rows];
         for (int i = 0; i < this->rows; i++) {
             this->board[i] = new T[this->columns];
@@ -35,30 +40,30 @@ public:
         this->n_moves = 0;
     }
 
-    bool isThere_a_Winner(){
-        return someOneWon;
-    }
-
     // Core game functions
     bool update_board(int x, int y, T symbol) override {
         if (isValidMove(x,y,symbol)) {
+            playerTurn = !playerTurn;
             if (symbol == '.'){
                 this->n_moves--;
                 this->board[x][y] = '.';
-                DecideWhoWins();
+                if (this->n_moves < 24){
+                    playersTurnsFinished = false;
+                }
             }
 
-            else if (someOneWon){
-                currentSymbol = symbol;
+            else if (playersTurnsFinished){
+                this->n_moves = max(this->n_moves,25);
                 return true;
             }
 
             else {
                 this->n_moves++;
                 this->board[x][y] = symbol;
-                currentSymbol = symbol;
+                if (this->n_moves == 24){
+                    playersTurnsFinished = true;
+                }
             }
-            DecideWhoWins();
             return true;
         }
         return false;
@@ -75,35 +80,45 @@ public:
         }
         cout << endl;
     }
+
     bool is_win() override {
-        return winnerSymbol == currentSymbol;
+        if (this->n_moves == 25) {
+            int count_X = countThreeInARow('X');
+            int count_O = countThreeInARow('O');
+            if (playerTurn){
+                return count_X > count_O;
+            }
+            else if (!playerTurn){
+                return count_X < count_O;
+            }
+        }
+        return false;
     }
 
     bool is_draw() override {
-        if (this->n_moves == 9) {
+        if (this->n_moves == 25) {
             int count_X = countThreeInARow('X');
             int count_O = countThreeInARow('O');
             return count_X == count_O;
         }
         return false;
     }
-    void DecideWhoWins() {
+
+    string whoWon(const string& player1Name, const string& player2Name) {
         int count_X = countThreeInARow('X');
         int count_O = countThreeInARow('O');
 
-        if (count_X > 0){
-            winnerSymbol = 'O';
-            someOneWon = true;
+        if (this->n_moves == 24) {
+
+            if (count_X > count_O) {
+                return player1Name;
+            } else if (count_O > count_X) {
+                return player2Name;
+            }
         }
-        else if (count_O > 0){
-            winnerSymbol = 'X';
-            someOneWon = true;
-        }
-        else{
-            someOneWon = false;
-            winnerSymbol = ' ';
-        }
+        return "";
     }
+
     bool game_is_over() override {
         return is_draw() || is_win();
     }
@@ -113,27 +128,34 @@ public:
         return this->board;
     }
 
+    int getMovesPlayed() {
+        return this->n_moves;
+    }
+
     T** GetBoard() {
         return this->board;
     }
 
+    int GetMovesPlayed() {
+        return this->n_moves;
+    }
 };
 
 //================= Human Player Class =================
 template <typename T>
-class ThreeByThree_HumanPlayer : public Player<T> {
+class FiveByFive_HumanPlayer : public Player<T> {
 public:
 
-    ThreeByThree_HumanPlayer(string n,T symbol) : Player<T>(n,symbol){}
+    FiveByFive_HumanPlayer(string n,T symbol) : Player<T>(n,symbol){}
 
     void getmove(int& x, int& y) override {
-        if (dynamic_cast<ThreeByThree_Board<char>*>(this->boardPtr)->isThere_a_Winner()){
+        if (dynamic_cast<FiveByFive_Board<char>*>(this->boardPtr)->isPlayerTurnsFinished()){
             x = -1;
             y = -1;
             return;
         }
         cout << "\nPlayer " << this->name << "'s turn (" << this->symbol << ")" << endl;
-        cout << "Please enter your move x and y (0 to 2) separated by spaces: ";
+        cout << "Please enter your move x and y (0 to 4) separated by spaces: ";
 
         cin >> x >> y;
 
@@ -143,23 +165,23 @@ public:
 
 //================= Random Player Class =================
 template <typename T>
-class ThreeByThree_RandomPlayer : public Player<T> {
+class FiveByFive_RandomPlayer : public Player<T> {
 private:
     int dimension;
 
 public:
-    ThreeByThree_RandomPlayer(T symbol) : Player<T>("Random Computer Player",symbol) {
-        dimension = 3;
+    FiveByFive_RandomPlayer(T symbol) : Player<T>(symbol) {
+        this->name = "Random Computer Player";
+        dimension = 5;
         srand(static_cast<unsigned int>(time(0)));
     }
 
     void getmove(int& x, int& y) override {
-        if (dynamic_cast<ThreeByThree_Board<char>*>(this->boardPtr)->isThere_a_Winner()){
+        if (dynamic_cast<FiveByFive_Board<char>*>(this->boardPtr)->isPlayerTurnsFinished()){
             x = -1;
             y = -1;
             return;
         }
-
         x = rand() % dimension;
         y = rand() % dimension;
         while (!this->boardPtr->update_board(x, y, this->symbol)) {
@@ -174,7 +196,7 @@ public:
 
 //================= Helper Function Implementations =================
 template <typename T>
-int ThreeByThree_Board<T>::countThreeInARow(T symbol) {
+int FiveByFive_Board<T>::countThreeInARow(T symbol) {
     int count = 0;
 
     // Check horizontal three-in-a-row
@@ -225,11 +247,10 @@ int ThreeByThree_Board<T>::countThreeInARow(T symbol) {
 }
 
 template <typename T>
-bool ThreeByThree_Board<T>::isValidMove(int x, int y, T symbol) {
-    if (x == -1 && y == -1){
+bool FiveByFive_Board<T>::isValidMove(int x, int y, T symbol) {
+    if (x == -1 && y == -1 && playersTurnsFinished){
         return true;
     }
-
     if (x < 0 || x >= this->rows || y < 0 || y >= this->columns) {
         return false;
     }
@@ -242,158 +263,65 @@ bool ThreeByThree_Board<T>::isValidMove(int x, int y, T symbol) {
 }
 
 
-
-void RunBoardGame(){
-    int choice;
-
-    Board<char> * board = new ThreeByThree_Board<char>();
-    Player<char> * players[2];
-
-    string player1,player2;
-
-
-    cout << "Five by Five XO GameBoard3 \n";
-
-    // Set up player 1
-    cout << "Enter Player 1 name (symbol is X): ";
-    cin >> player1;
-    cout << "Choose Player X type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice){
-        case 1:
-            players[0] = new ThreeByThree_HumanPlayer<char>(player1,'X');
-            players[0]->setBoard(board);
-            break;
-        case 2:
-            players[0] = new ThreeByThree_RandomPlayer<char>('X');
-            players[0]->setBoard(board);
-            break;
-        case 3:
-
-        default:
-            break;
-    }
-
-
-    cout << "Enter Player 2 name (symbol is O): ";
-    cin >> player2;
-    cout << "Choose Player O type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice){
-        case 1:
-            players[1] = new ThreeByThree_HumanPlayer<char>(player2,'O');
-            players[1]->setBoard(board);
-            break;
-        case 2:
-            players[1] = new ThreeByThree_RandomPlayer<char>('O');
-            players[1]->setBoard(board);
-            break;
-        case 3:
-
-            break;
-        default:
-            break;
-    }
-
-    GameManager<char> fourInRowGameManager(board,players);
-
-    fourInRowGameManager.run();
-
-    delete board;
-
-    for (auto & player : players){
-        delete player;
-    }
-}
-
 class BoardGame3_Wrapper {
 public:
-    enum GameType {
-        Human,
-        Random
-    };
+    enum class PlayerType { Human, Random };
 
-private:
-    ThreeByThree_Board<char>* board;
-    Player<char>* players[2];
-    GameType playersType[2];
-
-public:
-    BoardGame3_Wrapper() : board(nullptr) {
-        players[0] = players[1] = nullptr;
+    BoardGame3_Wrapper() {
+        board = new FiveByFive_Board<char>();
+        player1 = nullptr;
+        player2 = nullptr;
     }
 
-    void InitGame(GameType player1Type, GameType player2Type) {
-        board = new ThreeByThree_Board<char>();
-
-        switch(player1Type) {
-            case Human:
-                players[0] = new ThreeByThree_HumanPlayer<char>("Player 1", 'X');
-                break;
-            case Random:
-                players[0] = new ThreeByThree_RandomPlayer<char>('X');
-                break;
-        }
-        players[0]->setBoard(board);
-
-        switch(player2Type) {
-            case Human:
-                players[1] = new ThreeByThree_HumanPlayer<char>("Player 2", 'O');
-                break;
-            case Random:
-                players[1] = new ThreeByThree_RandomPlayer<char>('O');
-                break;
-        }
-        players[1]->setBoard(board);
-
-        playersType[0] = player1Type;
-        playersType[1] = player2Type;
+    ~BoardGame3_Wrapper() {
+        delete board;
+        delete player1;
+        delete player2;
     }
 
-    void DisplayBoard() {
-        board->display_board();
+    void InitializeGame(string player1Name, string player2Name, PlayerType player1Type, PlayerType player2Type) {
+        // Create players based on type
+        if (player1Type == PlayerType::Human)
+            player1 = new FiveByFive_HumanPlayer<char>(player1Name, 'X');
+        else
+            player1 = new FiveByFive_RandomPlayer<char>('X');
+
+        if (player2Type == PlayerType::Human)
+            player2 = new FiveByFive_HumanPlayer<char>(player2Name, 'O');
+        else
+            player2 = new FiveByFive_RandomPlayer<char>('O');
+
+        // Link players to board
+        player1->setBoard(board);
+        player2->setBoard(board);
     }
 
-    string GetPlayer1Name() {
-        return players[0]->getname();
+    char** GetBoard() {
+        return board->GetBoard();
     }
 
-    string GetPlayer2Name() {
-        return players[1]->getname();
+    int GetMovesPlayed() {
+        return board->GetMovesPlayed();
+    }
+
+    bool IsValidMove(int x, int y) {
+        return (x >= 0 && x < 5 && y >= 0 && y < 5 && board->GetBoard()[x][y] == '.');
     }
 
     void GetPlayer1Move(int& x, int& y) {
-        if (playersType[0] == Human) {
-            return;
-        }
-        players[0]->getmove(x, y);
+        player1->getmove(x, y);
     }
 
     void GetPlayer2Move(int& x, int& y) {
-        if (playersType[1] == Human) {
-            return;
-        }
-        players[1]->getmove(x, y);
+        player2->getmove(x, y);
     }
 
-    void Player1PerformMove(int x, int y) {
-        if (!board->update_board(x, y, players[0]->getsymbol())) {
-            throw std::runtime_error("Invalid move for Player 1");
-        }
+    bool Player1PerformMove(int x, int y) {
+        return board->update_board(x, y, 'X');
     }
 
-    void Player2PerformMove(int x, int y) {
-        if (!board->update_board(x, y, players[1]->getsymbol())) {
-            throw std::runtime_error("Invalid move for Player 2");
-        }
+    bool Player2PerformMove(int x, int y) {
+        return board->update_board(x, y, 'O');
     }
 
     bool isWin() {
@@ -408,15 +336,20 @@ public:
         return board->game_is_over();
     }
 
-    char** GetBoard() {
-        return board->GetBoard();
+    void ClearGameState() {
+        delete board;
+        delete player1;
+        delete player2;
+        board = new FiveByFive_Board<char>();
+        player1 = nullptr;
+        player2 = nullptr;
     }
 
-    ~BoardGame3_Wrapper() {
-        delete board;
-        delete players[0];
-        delete players[1];
-    }
+private:
+    FiveByFive_Board<char>* board;
+    Player<char>* player1;
+    Player<char>* player2;
 };
+
 
 #endif
