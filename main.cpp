@@ -4,8 +4,8 @@ using namespace std;
 
 int main() {
     int choice;
-    cout << "Welcome to FCAI X-O Game. :)\n";
-    cout<<"Choose your game \n";
+    cout << "Welcome to BoardGames Application\n";
+    cout<<"What Game do you want to play ? \n";
     cout<<"1-Pyramid Tic-Tac-Toe \n";
     cout<<"2-Four in a row Tic-Tac-Toe \n";
     cout<<"3-5X5 Tic-Tac-Toe \n";
@@ -43,11 +43,9 @@ int main() {
             RunBoardGame8();
             break;
         default:
-            cout << "Invalid choice . Exiting the game.\n";
-            return 1;
+            cout << "Invalid choice, Try Again\n";
+            break;
     }
-
-
 
     return 0;
 }

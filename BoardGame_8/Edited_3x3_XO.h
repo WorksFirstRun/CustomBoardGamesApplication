@@ -21,30 +21,12 @@ public:
 
 };
 
-//template <typename T>
-//class X_O_Player : public Player<T> {
-//public:
-//    X_O_Player (string name, T symbol);
-//    void getmove(int& x, int& y) ;
-//
-//};
-//
-//template <typename T>
-//class X_O_Random_Player : public RandomPlayer<T>{
-//public:
-//    X_O_Random_Player (T symbol);
-//    void getmove(int &x, int &y) ;
-//};
-
-
-
-
 
 //--------------------------------------- IMPLEMENTATION
 
 #include <iostream>
 #include <iomanip>
-#include <cctype>  // for toupper()
+#include <cctype>
 
 using namespace std;
 
@@ -68,8 +50,6 @@ void X_O_Board<T>::set_position(int x) {
 }
 template <typename T>
 bool X_O_Board<T>::Is_valid(int &x, int &y, T symbol) {
-//'     cout<<"\n "<<this->board[x][y];
-//     cout.flush();'
     return (x >= 0 && x < 3 && y >= 0 && y < 3 &&
             this->board[x][y] == ' ')&&position>=0 &&position<9&&(symbol=='X'||symbol=='O');
 }
@@ -139,34 +119,6 @@ bool X_O_Board<T>::game_is_over() {
 }
 
 //--------------------------------------
-
-// Constructor for X_O_Player
-//template <typename T>
-//X_O_Player<T>::X_O_Player(string name, T symbol) : Player<T>(name, symbol) {}
-//
-//template <typename T>
-//void X_O_Player<T>::getmove(int& x, int& y) {
-//
-//    cin >> x >> y;
-//
-//}
-//
-//// Constructor for X_O_Random_Player
-//template <typename T>
-//X_O_Random_Player<T>::X_O_Random_Player(T symbol) : RandomPlayer<T>(symbol) {
-//    this->dimension = 3;
-//    this->name = "Random Computer Player";
-//    srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
-//}
-//
-//template <typename T>
-//void X_O_Random_Player<T>::getmove(int& x, int& y) {
-//    x = rand() % this->dimension;  // Random number between 0 and 2
-//    y = rand() % this->dimension;
-//}
-
-
-
 
 
 

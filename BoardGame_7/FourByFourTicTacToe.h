@@ -499,83 +499,6 @@ void FourByFourTTT_RandomPlayer<T>::UpdateReferences() {
     }
 }
 
-/*
-
-void RunBoardGame(){
-    int choice;
-
-    Player<Token> * players[2];
-
-    auto boardPtr = std::make_shared<FourByFourTTT_Board<Token>>();
-
-    auto emptyToken1 = std::make_shared<Token>();
-    emptyToken1->InitializeData({0, 0}, 'X', boardPtr);
-
-    auto emptyToken2 = std::make_shared<Token>();
-    emptyToken2->InitializeData({0, 0}, 'O', boardPtr);
-
-    string player1,player2;
-
-
-    cout << "Four by Four XO GameBoard5 \n";
-
-    // Set up player 1
-    cout << "Enter Player 1 name (symbol is X): ";
-    cin >> player1;
-    cout << "Choose Player X type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice){
-        case 1:
-            players[0] = new FourByFourTTT_Player<Token>(player1,*emptyToken1);
-            players[0]->setBoard(boardPtr.get());
-            break;
-        case 2:
-            players[0] = new FourByFourTTT_RandomPlayer<Token>(*emptyToken1,boardPtr.get());
-            players[0]->setBoard(boardPtr.get());
-            break;
-        case 3:
-
-        default:
-            break;
-    }
-
-    cout << "Enter Player 2 name (symbol is O): ";
-    cin >> player2;
-    cout << "Choose Player O type:\n";
-    cout << "1. Human\n";
-    cout << "2. Random Computer\n";
-    cout << "3. Smart Computer (AI)\n";
-    cin >> choice;
-
-    switch(choice){
-        case 1:
-            players[1] = new FourByFourTTT_Player<Token>(player2,*emptyToken2);
-            players[1]->setBoard(boardPtr.get());
-            break;
-        case 2:
-            players[1] = new FourByFourTTT_RandomPlayer<Token>(*emptyToken2,boardPtr.get());
-            players[1]->setBoard(boardPtr.get());
-            break;
-        case 3:
-
-            break;
-        default:
-            break;
-    }
-
-    GameManager<Token> fourInRowGameManager(boardPtr.get(),players);
-
-    fourInRowGameManager.run();
-
-    for (auto & player : players){
-        delete player;
-    }
-}*/
-
 
 bool BoardGame7_Wrapper::isInitialized() {
     return board != nullptr && players[0] != nullptr && players[1] != nullptr;
@@ -750,7 +673,7 @@ bool BoardGame7_Wrapper::isGameOver() {
 void BoardGame7_Wrapper::ClearGameState() {
     if (isInitialized()){
         delete board;
-        board = nullptr; // Now safe to check if the board is initialized
+        board = nullptr;
 
         delete players[0];
         players[0] = nullptr;
