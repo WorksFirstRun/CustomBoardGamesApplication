@@ -280,7 +280,10 @@ public:
     }
 
     void InitializeGame(string player1Name, string player2Name, PlayerType player1Type, PlayerType player2Type) {
-        // Create players based on type
+        ClearGameState();
+        
+        board = new FiveByFive_Board<char>();
+        
         if (player1Type == PlayerType::Human)
             player1 = new FiveByFive_HumanPlayer<char>(player1Name, 'X');
         else
@@ -291,7 +294,6 @@ public:
         else
             player2 = new FiveByFive_RandomPlayer<char>('O');
 
-        // Link players to board
         player1->setBoard(board);
         player2->setBoard(board);
     }
@@ -301,7 +303,8 @@ public:
     }
 
     int GetMovesPlayed() {
-        return board->GetMovesPlayed();
+        if (!board) return 0;
+        return board->getMovesPlayed();
     }
 
     bool IsValidMove(int x, int y) {
@@ -337,12 +340,18 @@ public:
     }
 
     void ClearGameState() {
-        delete board;
-        delete player1;
-        delete player2;
-        board = new FiveByFive_Board<char>();
-        player1 = nullptr;
-        player2 = nullptr;
+        if (board) {
+            delete board;
+            board = nullptr;
+        }
+        if (player1) {
+            delete player1;
+            player1 = nullptr;
+        }
+        if (player2) {
+            delete player2;
+            player2 = nullptr;
+        }
     }
 
 private:

@@ -39,7 +39,7 @@ public:
         return this->board;
     }
     int get_current_board() {
-
+    
         return current_board;
     }
     bool is_sub_board_complete(int boardIndex) {
@@ -75,11 +75,11 @@ bool Ultimate_grid<T>::update_board(int x, int y, T symbol) {
         int subGrid = (x / 3) * 3 + (y / 3);
         int localx = x % 3;
         int localy = y % 3;
-
+        
         if (current_board != -1 && subGrid != current_board) {
             return false;
         }
-
+        
         if (Big_board[subGrid]->Is_valid(localx, localy, symbol)) {
             Big_board[subGrid]->update_board(localx, localy, symbol);
             if (Big_board[subGrid]->is_win() && Win[subGrid] == ' ') {
@@ -88,13 +88,13 @@ bool Ultimate_grid<T>::update_board(int x, int y, T symbol) {
             if (Big_board[subGrid]->is_draw() && Win[subGrid] == ' ') {
                 Set_win(subGrid, 'D');
             }
-
-
+            
+            
             current_board = (localx * 3 + localy);
             if (Win[current_board] != ' ') {
-                current_board = -1;
+                current_board = -1;  
             }
-
+            
             this->n_moves++;
             return true;
         }
@@ -185,7 +185,7 @@ public:
     void InitializeGame(string player1, string player2, PlayerType player1Type, PlayerType player2Type) {
         ClearGameState();
         board = new Ultimate_grid<char>();
-
+        
         switch(player1Type) {
             case Human:
                 players[0] = new Ultimate_Player<char>(player1, 'X');
@@ -195,7 +195,7 @@ public:
                 break;
         }
         players[0]->setBoard(board);
-
+        
         switch(player2Type) {
             case Human:
                 players[1] = new Ultimate_Player<char>(player2, 'O');
@@ -205,7 +205,7 @@ public:
                 break;
         }
         players[1]->setBoard(board);
-
+        
         playersType[0] = player1Type;
         playersType[1] = player2Type;
     }
@@ -315,9 +315,19 @@ public:
         }
     }
 
+    bool isInitialized() {
+        return board != nullptr && players[0] != nullptr && players[1] != nullptr;
+    }
 
     ~BoardGame8_Wrapper() {
         ClearGameState();
+    }
+
+    int GetMovesPlayed() {
+        if (!isInitialized()) {
+            throw runtime_error("Game is Not initialized ");
+        }
+        return board->n_moves;
     }
 };
 

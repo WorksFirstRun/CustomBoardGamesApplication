@@ -380,10 +380,19 @@ public:
         }
     }
 
-
+    bool isInitialized() {
+        return board != nullptr && players[0] != nullptr && players[1] != nullptr;
+    }
 
     ~BoardGame6_Wrapper() {
         ClearGameState();
+    }
+
+    int GetMovesPlayed() {
+        if (!isInitialized()) {
+            throw runtime_error("Game is Not initialized ");
+        }
+        return board->n_moves;
     }
 };
 

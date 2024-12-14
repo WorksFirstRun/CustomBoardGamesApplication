@@ -1,4 +1,3 @@
-
 #ifndef CUSTOMBOARDGAMESAPPLICATION_NUMERICAL_TIC_TAC_TOE_H
 #define CUSTOMBOARDGAMESAPPLICATION_NUMERICAL_TIC_TAC_TOE_H
 
@@ -616,7 +615,7 @@ bool BoardGame5_Wrapper::isGameOver() {
 void BoardGame5_Wrapper::ClearGameState() {
     if (isInitialized()){
         delete board;
-        board = nullptr; // Now safe to check if the board is initialized
+        board = nullptr; 
 
         delete players[0];
         players[0] = nullptr;

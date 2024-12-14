@@ -1,4 +1,3 @@
-
 #ifndef CUSTOMBOARDGAMESAPPLICATION_FOURBYFOURTICTACTOE_H
 #define CUSTOMBOARDGAMESAPPLICATION_FOURBYFOURTICTACTOE_H
 
@@ -560,8 +559,8 @@ vector<vector<char>> BoardGame7_Wrapper::GetBoard() {
 }
 
 int BoardGame7_Wrapper::GetMovesPlayed() {
-    if (!isInitialized()){
-        throw std::runtime_error("Game is not Initialized, Initialize first");
+    if (!isInitialized()) {
+        throw runtime_error("Game is Not initialized ");
     }
     return board->GetNumberOfMoves();
 }

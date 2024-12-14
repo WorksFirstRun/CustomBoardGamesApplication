@@ -275,10 +275,37 @@ public:
         }
     }
 
-
+    bool isInitialized() {
+        return board != nullptr && players[0] != nullptr && players[1] != nullptr;
+    }
 
     ~BoardGame1_Wrapper() {
         ClearGameState();
+    }
+
+    int GetBoardSize() {
+        return board->rows;
+    }
+
+    int GetMovesPlayed() {
+        return board->n_moves;
+    }
+
+    void InitializeGame(string player1Name, string player2Name, PlayerType player1Type, PlayerType player2Type) {
+        ClearGameState();
+        
+        if (player1Type == PlayerType::Human)
+            player1 = new Pyramid_player<char>(player1Name, 'X');
+        else
+            player1 = new Pyramid_Random_Player<char>('X');
+
+        if (player2Type == PlayerType::Human)
+            player2 = new Pyramid_player<char>(player2Name, 'O');
+        else
+            player2 = new Pyramid_Random_Player<char>('O');
+
+        player1->setBoard(board);
+        player2->setBoard(board);
     }
 };
 

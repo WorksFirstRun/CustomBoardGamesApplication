@@ -155,7 +155,7 @@ template <typename T>
 Word_Random_Player<T>::Word_Random_Player(T symbol) : RandomPlayer<T>(symbol) {
     this->dimension = 3;
     this->name = "Random Computer Player";
-    srand(static_cast<unsigned int>(time(0)));  // Seed the random number generator
+    srand(static_cast<unsigned int>(time(0)));  
 }
 template <typename T>
 void Word_Random_Player<T>::getmove(int& x, int& y) {
@@ -308,9 +308,50 @@ public:
         }
     }
 
+    bool isInitialized() {
+        return board != nullptr && players[0] != nullptr && players[1] != nullptr;
+    }
 
     ~BoardGame4_Wrapper() {
         ClearGameState();
+    }
+
+    bool ValidateWord(const string& word) {
+        ifstream file(filename);
+        string currentWord;
+        while (file >> currentWord) {
+            if (currentWord == word)
+                return true;
+        }
+        return false;
+    }
+
+    char** GetBigBoard() {
+        return board->GetBoard();
+    }
+
+    int GetMovesPlayed() {
+        if (!board) return 0;
+        return board->n_moves;
+    }
+
+    string** ConvertBoardToString() {
+        char** charBoard = board->GetBoard();
+        string** stringBoard = new string*[3];
+        for(int i = 0; i < 3; i++) {
+            stringBoard[i] = new string[3];
+            for(int j = 0; j < 3; j++) {
+                stringBoard[i][j] = string(1, charBoard[i][j]);
+            }
+        }
+        return stringBoard;
+    }
+
+    void CleanupStringBoard(string** stringBoard) {
+        for(int i = 0; i < 3; i++) {
+            delete[] stringBoard[i];
+        }
+        delete[] stringBoard;
     }
 };
 
