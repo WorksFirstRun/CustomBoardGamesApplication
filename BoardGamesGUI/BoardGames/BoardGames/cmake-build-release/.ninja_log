@@ -1,0 +1,12 @@
+# ninja log v6
+1	632	7560329641024514	CMakeFiles/BoardGames.dir/src/main.cpp.obj	47e62d68c9ab651d
+4	1765	7560329641055541	CMakeFiles/BoardGames.dir/src/BoardGamesGUI.cpp.obj	2569a2325184cf1b
+27	2030	7560329641292357	CMakeFiles/BoardGames.dir/include/imgui/backends/imgui_impl_opengl3.cpp.obj	7eec16b121a68b1e
+31	2397	7560329641325037	CMakeFiles/BoardGames.dir/src/glad.c.obj	7dcf07ddafab0258
+24	2706	7560329641250248	CMakeFiles/BoardGames.dir/include/imgui/backends/imgui_impl_glfw.cpp.obj	f9449062487e1952
+17	2904	7560329641186652	CMakeFiles/BoardGames.dir/include/imgui/imgui_tables.cpp.obj	fb868296a3eec552
+12	3383	7560329641141127	CMakeFiles/BoardGames.dir/include/imgui/imgui_demo.cpp.obj	f2821643a7ac37b0
+14	4324	7560329641163463	CMakeFiles/BoardGames.dir/include/imgui/imgui_draw.cpp.obj	cc1cbb71e6ca8d8a
+20	5215	7560329641217927	CMakeFiles/BoardGames.dir/include/imgui/imgui_widgets.cpp.obj	98303953c6ff6fa3
+9	7807	7560329641107018	CMakeFiles/BoardGames.dir/include/imgui/imgui.cpp.obj	b498fcae6340d602
+7807	8051	7560329719088619	BoardGames.exe	45c9ff4e1f5818c1
