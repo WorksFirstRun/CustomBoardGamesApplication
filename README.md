@@ -3,7 +3,7 @@
 a custom board Games application That contains 8 boardGames that is all based on the classic Tic Tac Toe Game But with some creative ideas.
 the program has an ai using the MinMax algorithm in Game number 2 and 5.
 me and my teammate members didn't have the time to implement an ai player for the rest of the games.
-we tried to make a graphical user interface for the 8 games using dot net framework but we faced alot of problems when integrating the code logic in c++ with the c# so we used IMGUI instead and made a gui for only game number 8 and 7. we may continue work on this project in the furture.
+we tried to make a graphical user interface for the 8 games using dot net framework but we faced alot of problems when integrating the code logic in c++ with c# so we used IMGUI instead and made a gui for only game number 8 and 7. we may continue work on this project in the furture.
 
 ## how to play the games 
 if you want to try it out in terminal (i recommend to try it in terminal thouh, since you may find some bugs we didn't find in gui),
