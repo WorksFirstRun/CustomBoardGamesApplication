@@ -8,7 +8,7 @@ we tried to make a graphical user interface for the 8 games using dot net framew
 ## how to play the games 
 if you want to try it out in terminal (i recommend to try it in terminal thouh, since you may find some bugs we didn't find in gui),
 all you have to do is just run the main file :D.
-if you want to try it in gui, run the executable file in the BoardGamesGUI\BoardGames\Release path
+if you want to try it in gui, run the executable file in the BoardGamesGUI/BoardGames/BoardGames/Release path
 
 for any questions about the gui code or anything alse, our emails is below feel free to contact us
 
